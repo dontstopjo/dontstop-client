@@ -1,9 +1,9 @@
-import { createBrowserRouter } from "react-router-dom";
-import Ex from "./pages/Ex";
+import { createBrowserRouter } from 'react-router-dom';
+import { RootLayout } from './layouts';
 
 export const router = createBrowserRouter([
   {
-    path: "/",
-    element: <Ex />,
+    path: '/',
+    element: <RootLayout />,
   },
 ]);
