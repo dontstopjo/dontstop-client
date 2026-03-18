@@ -1,6 +1,6 @@
-import styled from "@emotion/styled";
-import view_icon from "../assets/view_icon.svg";
-import heart_icon from "../assets/heart_icon.svg";
+import styled from '@emotion/styled';
+import view_icon from '../assets/view_icon.svg';
+import heart_icon from '../assets/heart_icon.svg';
 
 interface PostType {
   authorName: string;
@@ -9,6 +9,7 @@ interface PostType {
   views: number;
   likes: number;
   imgURL: string;
+  onClick?: () => void;
 }
 
 const formatCount = (n: number): string => {
@@ -24,9 +25,10 @@ const Post = ({
   views,
   likes,
   imgURL,
+  onClick,
 }: PostType) => {
   return (
-    <PostContainer imgURL={imgURL}>
+    <PostContainer onClick={onClick} imgURL={imgURL}>
       <Overlay>
         <TopLeft>
           <AuthorName>{authorName}님의 게시물</AuthorName>
@@ -65,13 +67,14 @@ const PostContainer = styled.div<{ imgURL: string }>`
 
   &:hover > div {
     opacity: 1;
+    transition: 0.3s ease-in-out;
   }
 `;
 
 const Overlay = styled.div`
   position: absolute;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: rgba(0, 0, 0, 0.151);
   opacity: 0;
   transition: opacity 0.2s ease;
 `;
