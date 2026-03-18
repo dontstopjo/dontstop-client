@@ -16,13 +16,19 @@ export const InformationContent = ({
       </Text>
       <Flex gap={6} alignItems="center">
         <img src={link} alt="link-img" />
-        <Text fontSize={12} fontWeight={500} color={colors.gray[900]}>
+        <Link href={linkUrl} target="_blank">
           {linkUrl}
-        </Text>
+        </Link>
       </Flex>
     </Flex>
   );
 };
+
+const Link = styled.a`
+  font-size: 12px;
+  font-weight: 500;
+  color: ${colors.gray[900]};
+`;
 
 const ImgWrapper = styled.img`
   width: 207px;

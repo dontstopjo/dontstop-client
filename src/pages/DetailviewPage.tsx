@@ -7,7 +7,7 @@ import type {
   PostSchemaType,
 } from '../types';
 import Input from '../components/Input';
-import { CommentContent, InformationContent } from '../components';
+import { CommentContent, InformationContent, PostActions } from '../components';
 import Post from '../components/Post';
 import { SendIcon } from '../assets';
 
@@ -242,12 +242,19 @@ export const DetailviewPage = () => {
       <ContentWrapper>
         <ImgWrapper />
         <Flex isColumn gap={24}>
-          <Flex isColumn gap={12}>
-            <Flex alignItems="center" gap={12}>
-              <ProfileContent></ProfileContent>
-              <Text fontSize={16} fontWeight={600} color={colors.gray[1000]}>
-                {datas.authorName}
-              </Text>
+          <Flex isColumn gap={12} width="100%">
+            <Flex justifyContent="space-between" width="100%">
+              <Flex alignItems="center" gap={12}>
+                <ProfileContent></ProfileContent>
+                <Text fontSize={16} fontWeight={600} color={colors.gray[1000]}>
+                  {datas.authorName}
+                </Text>
+              </Flex>
+              <Flex gap={8} alignItems="center">
+                <PostActions number={100} type="eye" />
+                <PostActions number={100} type="heart" />
+                <PostActions number={100} type="save" />
+              </Flex>
             </Flex>
             <Flex
               width="100%"
