@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 import {
   AddIcon,
   HomeIcon,
@@ -6,8 +6,8 @@ import {
   LoginIcon,
   MyPageIcon,
   SettingIcon,
-} from '../assets';
-import { useLocation, useNavigate } from 'react-router-dom';
+} from "../assets";
+import { useLocation, useNavigate } from "react-router-dom";
 
 interface INavType {
   icon: React.ElementType;
@@ -19,18 +19,18 @@ interface INavType {
 const navData = [
   {
     icon: HomeIcon,
-    content: '홈',
-    path: '/',
+    content: "홈",
+    path: "/",
   },
   {
     icon: AddIcon,
-    content: '글 작성',
-    path: '/add',
+    content: "글 작성",
+    path: "/add",
   },
   {
     icon: MyPageIcon,
-    content: '마이페이지',
-    path: '/mypage',
+    content: "마이페이지",
+    path: "/my",
   },
 ];
 
@@ -49,7 +49,7 @@ export const SideBar = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
 
-  const accessToken = 'dsddsds';
+  const accessToken = "dsddsds";
   return (
     <SideBarWrapper>
       <LogoWrapper>
@@ -122,8 +122,8 @@ const NavImgWrapper = styled.div`
   }
 `;
 
-const NavName = styled.div<Pick<INavType, 'isNav'>>`
+const NavName = styled.div<Pick<INavType, "isNav">>`
   font-size: 12px;
   font-weight: 600;
-  color: ${({ isNav }) => (isNav ? '#262626' : '#ADADAD')};
+  color: ${({ isNav }) => (isNav ? "#262626" : "#ADADAD")};
 `;
