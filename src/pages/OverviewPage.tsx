@@ -272,27 +272,8 @@ export const OverviewPage = () => {
     },
   ]);
 
-  const [searchValue, setSearchValue] = useState<string>('');
-
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchValue(e.target.value);
-  };
   return (
-    <Flex
-      paddingTop="28px"
-      paddingLeft="28px"
-      paddingRight="28px"
-      alignItems="center"
-      isColumn
-      gap={28}
-      width="100%"
-    >
-      <Input
-        value={searchValue}
-        onChange={handleSearchChange}
-        type="search"
-        placeholder="검색..."
-      />
+    <Flex alignItems="center" width="100%">
       <Flex width="fit-content" flexWrap="wrap" gap={24} height="fit-content">
         {datas.map((data) => (
           <Post

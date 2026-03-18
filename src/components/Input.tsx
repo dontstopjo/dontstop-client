@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import search_icon from '../assets/searchIcon.svg';
+import { colors } from '../styles/theme';
 
 interface InputType {
   placeholder: string;
@@ -13,10 +14,7 @@ const Input = ({ placeholder, type, onChange, className }: InputType) => {
   return (
     <InputContainer className={className}>
       {type == 'search' && <SearchIcon src={search_icon} alt="검색" />}
-      <StyledInput
-        placeholder={placeholder}
-        onChange={(e) => onChange(e.target.value)}
-      />
+      <StyledInput placeholder={placeholder} onChange={onChange} />
     </InputContainer>
   );
 };
@@ -45,8 +43,11 @@ const StyledInput = styled.input`
   :focus {
     outline: none;
   }
+  ::placeholder {
+    color: ${colors.gray[500]};
+  }
   font-size: 1em;
-  color: #707070;
+  color: ${colors.gray[900]};
 `;
 
 export default Input;
