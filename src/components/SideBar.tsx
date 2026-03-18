@@ -75,6 +75,7 @@ export const SideBar = () => {
 };
 
 const SideBarWrapper = styled.div`
+  background-color: #ffffff;
   position: fixed;
   top: 0;
   left: 0;
