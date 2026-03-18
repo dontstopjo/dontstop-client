@@ -1,49 +1,39 @@
-import styled from "@emotion/styled";
+import styled from '@emotion/styled';
+import { colors } from '../styles/theme';
 
 interface ButtonType {
-  text: string;
-  isActive: boolean;
-  onClick: () => void;
-  className?: string;
+  children: string;
+  onClick?: () => void;
+  backgroundColor?: string;
+  color?: string;
 }
 
-const Button = ({ text, isActive, onClick, className }: ButtonType) => {
+const Button = ({
+  children,
+  onClick,
+  color = colors.gray[50],
+  backgroundColor = colors.gray[900],
+}: ButtonType) => {
   return (
     <StyledButton
-      isActive={isActive}
-      onClick={isActive ? onClick : undefined}
-      className={className}
+      onClick={onClick}
+      color={color}
+      backgroundColor={backgroundColor}
     >
-      {text}
+      {children}
     </StyledButton>
   );
 };
 
-const StyledButton = styled.button<{ isActive: boolean }>`
-  width: 100%;
-  height: 100%;
-  font-size: 1em;
-  border-radius: 10px;
-  transition: opacity 0.2s;
-  font-weight: 700;
+const StyledButton = styled.button<Omit<ButtonType, 'onClick' | 'children'>>`
+  padding: 12px 30px;
+  font-size: 16px;
+  border-radius: 12px;
+  font-weight: 500;
+  cursor: pointer;
 
-  ${({ isActive }) =>
-    isActive
-      ? `
-    background-color: #ffffff;
-    color: #616161;
-    border: 1.5px solid #616161;
-    cursor: pointer;
-    &:hover {
-      opacity: 0.75;
-    }
-  `
-      : `
-    background-color: #CDCDCD;
-    color: #ffffff;
-    border: none;
-    cursor: default;
-  `}
+  color: ${({ color }) => color};
+  background-color: ${({ backgroundColor }) => backgroundColor};
 `;
 
 export default Button;
