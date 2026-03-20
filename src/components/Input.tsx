@@ -1,20 +1,25 @@
-import styled from '@emotion/styled';
-import search_icon from '../assets/searchIcon.svg';
-import { colors } from '../styles/theme';
+import styled from "@emotion/styled";
+import search_icon from "../assets/searchIcon.svg";
+import { colors } from "../styles/theme";
 
 interface InputType {
   placeholder: string;
-  type: 'text' | 'search';
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  type: "text" | "search";
+  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   className?: string;
   value: string;
+  isTextarea?: boolean;
 }
 
-const Input = ({ placeholder, type, onChange, className }: InputType) => {
+const Input = ({ placeholder, type, onChange, className, value, isTextarea }: InputType) => {
   return (
     <InputContainer className={className}>
-      {type == 'search' && <SearchIcon src={search_icon} alt="검색" />}
-      <StyledInput placeholder={placeholder} onChange={onChange} />
+      {type == "search" && <SearchIcon src={search_icon} alt="검색" />}
+      {isTextarea ? (
+        <StyledTextarea placeholder={placeholder} onChange={onChange} value={value} />
+      ) : (
+        <StyledInput placeholder={placeholder} onChange={onChange as (e: React.ChangeEvent<HTMLInputElement>) => void} value={value} />
+      )}
     </InputContainer>
   );
 };
@@ -22,6 +27,7 @@ const Input = ({ placeholder, type, onChange, className }: InputType) => {
 const InputContainer = styled.div`
   width: 100%;
   font-size: 16px;
+  color: ${colors.gray[900]};
   background-color: #eeeded;
   border-radius: 10px;
   display: flex;
@@ -40,6 +46,22 @@ const StyledInput = styled.input`
   height: 100%;
   background: none;
   border: none;
+  :focus {
+    outline: none;
+  }
+  ::placeholder {
+    color: ${colors.gray[500]};
+  }
+  font-size: 1em;
+  color: ${colors.gray[900]};
+`;
+
+const StyledTextarea = styled.textarea`
+  width: 100%;
+  height: 100%;
+  background: none;
+  border: none;
+  resize: none;
   :focus {
     outline: none;
   }
