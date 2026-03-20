@@ -66,7 +66,12 @@ export const SideBar = () => {
         </NavWrapper>
       </LogoWrapper>
       {accessToken ? (
-        <NavContent content="설정" icon={SettingIcon} isNav />
+        <NavContent
+          onClick={() => navigate("/setting")}
+          content="설정"
+          icon={SettingIcon}
+          isNav
+        />
       ) : (
         <NavContent content="로그인" icon={LoginIcon} isNav />
       )}
