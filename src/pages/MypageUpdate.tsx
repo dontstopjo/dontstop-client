@@ -56,13 +56,7 @@ const MypageUpdate = () => {
             <Text fontSize={16} fontWeight={500}>
               설명
             </Text>
-            <DescInput
-              placeholder="이름을 입력"
-              type="text"
-              value={desc}
-              onChange={(e) => setDesc(e.target.value)}
-              isTextarea
-            ></DescInput>
+            /* 텍스트 에리아 필요해용~ */
           </Flex>
         </Flex>
       </Flex>
@@ -103,10 +97,6 @@ const UpdateButton = styled.button`
 `;
 const NameInput = styled(Input)`
   width: 446px;
-`;
-const DescInput = styled(Input)`
-  width: 960px;
-  height: 272px;
 `;
 
 export default MypageUpdate;
