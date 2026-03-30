@@ -5,6 +5,7 @@ import profile from "../assets/profile.svg";
 import update_icon from "../assets/update_icon.svg";
 import Input from "../components/Input";
 import { useState } from "react";
+import { TextArea } from "../components/TextArea";
 
 const MypageUpdate = () => {
   const [name, setName] = useState("");
@@ -45,18 +46,20 @@ const MypageUpdate = () => {
               이름
             </Text>
             <NameInput
-              placeholder="이름을 입력"
+              placeholder="이름을 입력해주세요."
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
             ></NameInput>
           </Flex>
 
-          <Flex isColumn={true} alignItems="flex-start" gap={8}>
-            <Text fontSize={16} fontWeight={500}>
-              설명
-            </Text>
-            /* 텍스트 에리아 필요해용~ */
+          <Flex width="962px" isColumn={true} alignItems="flex-start" gap={8}>
+            <TextArea
+              label="설명"
+              placeholder="설명을 입력해주세요."
+              value={desc}
+              onChange={(e) => setDesc(e.target.value)}
+            />
           </Flex>
         </Flex>
       </Flex>

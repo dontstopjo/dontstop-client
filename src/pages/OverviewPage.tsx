@@ -7,7 +7,7 @@ import FullLogo from "../assets/FullLogo.svg";
 import chat from "../assets/chat.svg";
 
 export const OverviewPage = () => {
-  const isLogged = false;
+  const isLogged = true;
 
   const [datas, setDatas] = useState<PostSchemaType[]>([
     {
