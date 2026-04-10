@@ -1,19 +1,24 @@
-import styled from '@emotion/styled';
-import search_icon from '../assets/searchIcon.svg';
-import { colors } from '../styles/theme';
+import styled from "@emotion/styled";
+import { searchIcon } from "../assets";
+import { colors } from "../styles/theme";
 
 interface InputType {
   placeholder: string;
-  type: 'text' | 'search';
+  type: "text" | "search";
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   className?: string;
   value: string;
 }
 
-const Input = ({ placeholder, type, onChange, className }: InputType) => {
+export const Input = ({
+  placeholder,
+  type,
+  onChange,
+  className,
+}: InputType) => {
   return (
     <InputContainer className={className}>
-      {type == 'search' && <SearchIcon src={search_icon} alt="검색" />}
+      {type == "search" && <SearchIcon src={searchIcon} alt="검색" />}
       <StyledInput placeholder={placeholder} onChange={onChange} />
     </InputContainer>
   );
@@ -49,5 +54,3 @@ const StyledInput = styled.input`
   font-size: 1em;
   color: ${colors.gray[900]};
 `;
-
-export default Input;

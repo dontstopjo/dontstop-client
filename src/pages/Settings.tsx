@@ -1,10 +1,8 @@
 import styled from "@emotion/styled";
 import { colors, Flex, Text } from "../styles/theme";
-import profile from "../assets/profile.svg";
-import logout_icon from "../assets/logout_icon.svg";
-import signout_icon from "../assets/signout_icon.svg";
+import { profileIcon, LogoutIcon, SignoutIcon } from "../assets";
 
-const Settings = () => {
+export const Settings = () => {
   return (
     <Flex
       width="100%"
@@ -21,7 +19,7 @@ const Settings = () => {
 
         <Flex gap={40} alignItems="center">
           <Profile>
-            <img src={profile} alt="프로필" />
+            <img src={profileIcon} alt="프로필" />
           </Profile>
 
           <Flex isColumn={true} gap={12}>
@@ -43,7 +41,7 @@ const Settings = () => {
         <Flex isColumn={true}>
           <SettingButton>
             <Flex gap={16} alignItems="center">
-              <img src={logout_icon} />
+              <img src={LogoutIcon} />
               <Text fontSize={20} fontWeight={600}>
                 로그아웃
               </Text>
@@ -52,7 +50,7 @@ const Settings = () => {
 
           <SettingButton>
             <Flex gap={16} alignItems="center">
-              <img src={signout_icon} />
+              <img src={SignoutIcon} />
               <Text fontSize={20} fontWeight={600}>
                 회원탈퇴
               </Text>
@@ -84,5 +82,3 @@ const SettingButton = styled.button`
   display: flex;
   align-items: center;
 `;
-
-export default Settings;

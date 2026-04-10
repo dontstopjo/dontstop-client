@@ -1,10 +1,9 @@
 import { useState } from "react";
 import styled from "@emotion/styled";
 import { colors, Flex, Text } from "../styles/theme";
-import profile from "../assets/profile.svg";
-import update_icon from "../assets/update_icon.svg";
-import Post from "../components/Post";
 import type { PostSchemaType } from "../types";
+import { Post } from "../components";
+import { profileIcon, updateIcon } from "../assets";
 
 type LookbookTab = "saved" | "public" | "private";
 
@@ -14,7 +13,7 @@ const tabs: { key: LookbookTab; label: string }[] = [
   { key: "private", label: "나의 비공개 룩북" },
 ];
 
-const Mypage = () => {
+export const Mypage = () => {
   const [activeTab, setActiveTab] = useState<LookbookTab>("saved");
 
   // TODO: API 연동 시 activeTab에 따라 데이터 fetch
@@ -293,9 +292,9 @@ const Mypage = () => {
     <Flex width="100%" isColumn={true} paddingTop="62px" gap={72}>
       <Flex gap={40} alignItems="center">
         <Profile>
-          <img src={profile} alt="프로필" />
+          <img src={profileIcon} alt="프로필" />
           <UpdateButton>
-            <img src={update_icon} alt="프로필 수정" />
+            <img src={updateIcon} alt="프로필 수정" />
           </UpdateButton>
         </Profile>
 
@@ -388,5 +387,3 @@ const UpdateButton = styled.button`
   bottom: 4px;
   right: 4px;
 `;
-
-export default Mypage;
