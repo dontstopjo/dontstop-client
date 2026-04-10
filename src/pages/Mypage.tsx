@@ -1,10 +1,9 @@
 import { useState } from "react";
 import styled from "@emotion/styled";
 import { colors, Flex, Text } from "../styles/theme";
-import profile from "../assets/profile.svg";
-import update_icon from "../assets/update_icon.svg";
 import type { PostSchemaType } from "../types";
 import { Post } from "../components";
+import { profileIcon, updateIcon } from "../assets";
 
 type LookbookTab = "saved" | "public" | "private";
 
@@ -293,9 +292,9 @@ export const Mypage = () => {
     <Flex width="100%" isColumn={true} paddingTop="62px" gap={72}>
       <Flex gap={40} alignItems="center">
         <Profile>
-          <img src={profile} alt="프로필" />
+          <img src={profileIcon} alt="프로필" />
           <UpdateButton>
-            <img src={update_icon} alt="프로필 수정" />
+            <img src={updateIcon} alt="프로필 수정" />
           </UpdateButton>
         </Profile>
 

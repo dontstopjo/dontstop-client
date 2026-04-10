@@ -1,5 +1,5 @@
-import styled from '@emotion/styled';
-import { colors } from '../styles/theme';
+import styled from "@emotion/styled";
+import { colors } from "../styles/theme";
 
 interface ButtonType {
   children: string;
@@ -8,7 +8,7 @@ interface ButtonType {
   color?: string;
 }
 
-const Button = ({
+export const Button = ({
   children,
   onClick,
   color = colors.gray[50],
@@ -25,7 +25,7 @@ const Button = ({
   );
 };
 
-const StyledButton = styled.button<Omit<ButtonType, 'onClick' | 'children'>>`
+const StyledButton = styled.button<Omit<ButtonType, "onClick" | "children">>`
   padding: 12px 30px;
   font-size: 16px;
   border-radius: 12px;
@@ -35,5 +35,3 @@ const StyledButton = styled.button<Omit<ButtonType, 'onClick' | 'children'>>`
   color: ${({ color }) => color};
   background-color: ${({ backgroundColor }) => backgroundColor};
 `;
-
-export default Button;

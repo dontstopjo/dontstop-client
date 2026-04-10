@@ -2,9 +2,8 @@ import { useState } from "react";
 import type { PostSchemaType } from "../types";
 import { colors, Flex, Text } from "../styles/theme";
 import styled from "@emotion/styled";
-import FullLogo from "../assets/FullLogo.svg";
-import chat from "../assets/chat.svg";
 import { Post } from "../components";
+import { FullLogo, ChatIcon } from "../assets";
 
 export const OverviewPage = () => {
   const isLogged = true;
@@ -308,7 +307,7 @@ export const OverviewPage = () => {
             </Flex>
 
             <KakaoButton>
-              <img src={chat} />
+              <img src={ChatIcon} />
               카카오 로그인
             </KakaoButton>
           </Modal>

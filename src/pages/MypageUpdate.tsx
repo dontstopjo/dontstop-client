@@ -1,11 +1,8 @@
-import styled from "@emotion/styled";
-import Button from "../components/Button";
-import { Flex, Text, colors } from "../styles/theme";
-import profile from "../assets/profile.svg";
-import update_icon from "../assets/update_icon.svg";
 import { useState } from "react";
-import { TextArea } from "../components/TextArea";
-import { Input } from "../components";
+import styled from "@emotion/styled";
+import { Flex, Text, colors } from "../styles/theme";
+import { Input, TextArea, Button } from "../components";
+import { profileIcon, updateIcon } from "../assets";
 
 export const MypageUpdate = () => {
   const [name, setName] = useState("");
@@ -34,9 +31,9 @@ export const MypageUpdate = () => {
 
       <Flex width="100%" isColumn={true} gap={80} alignItems="center">
         <Profile>
-          <ProfileIcon src={profile} alt="프로필" />
+          <ProfileIcon src={profileIcon} alt="프로필" />
           <UpdateButton>
-            <img src={update_icon} alt="프로필 수정" />
+            <img src={updateIcon} alt="프로필 수정" />
           </UpdateButton>
         </Profile>
 

@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import search_icon from "../assets/searchIcon.svg";
+import { searchIcon } from "../assets";
 import { colors } from "../styles/theme";
 
 interface InputType {
@@ -18,7 +18,7 @@ export const Input = ({
 }: InputType) => {
   return (
     <InputContainer className={className}>
-      {type == "search" && <SearchIcon src={search_icon} alt="검색" />}
+      {type == "search" && <SearchIcon src={searchIcon} alt="검색" />}
       <StyledInput placeholder={placeholder} onChange={onChange} />
     </InputContainer>
   );
