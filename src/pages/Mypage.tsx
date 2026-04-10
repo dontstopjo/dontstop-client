@@ -14,7 +14,7 @@ const tabs: { key: LookbookTab; label: string }[] = [
   { key: "private", label: "나의 비공개 룩북" },
 ];
 
-const Mypage = () => {
+export const Mypage = () => {
   const [activeTab, setActiveTab] = useState<LookbookTab>("saved");
 
   // TODO: API 연동 시 activeTab에 따라 데이터 fetch
@@ -388,5 +388,3 @@ const UpdateButton = styled.button`
   bottom: 4px;
   right: 4px;
 `;
-
-export default Mypage;

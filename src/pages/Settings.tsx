@@ -4,7 +4,7 @@ import profile from "../assets/profile.svg";
 import logout_icon from "../assets/logout_icon.svg";
 import signout_icon from "../assets/signout_icon.svg";
 
-const Settings = () => {
+export const Settings = () => {
   return (
     <Flex
       width="100%"
@@ -84,5 +84,3 @@ const SettingButton = styled.button`
   display: flex;
   align-items: center;
 `;
-
-export default Settings;

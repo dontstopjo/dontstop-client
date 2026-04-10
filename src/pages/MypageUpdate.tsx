@@ -7,7 +7,7 @@ import Input from "../components/Input";
 import { useState } from "react";
 import { TextArea } from "../components/TextArea";
 
-const MypageUpdate = () => {
+export const MypageUpdate = () => {
   const [name, setName] = useState("");
   const [desc, setDesc] = useState("");
 
@@ -101,5 +101,3 @@ const UpdateButton = styled.button`
 const NameInput = styled(Input)`
   width: 446px;
 `;
-
-export default MypageUpdate;
