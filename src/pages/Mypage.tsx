@@ -3,8 +3,8 @@ import styled from "@emotion/styled";
 import { colors, Flex, Text } from "../styles/theme";
 import profile from "../assets/profile.svg";
 import update_icon from "../assets/update_icon.svg";
-import Post from "../components/Post";
 import type { PostSchemaType } from "../types";
+import { Post } from "../components";
 
 type LookbookTab = "saved" | "public" | "private";
 

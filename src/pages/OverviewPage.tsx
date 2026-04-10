@@ -1,10 +1,10 @@
 import { useState } from "react";
-import Post from "../components/Post";
 import type { PostSchemaType } from "../types";
 import { colors, Flex, Text } from "../styles/theme";
 import styled from "@emotion/styled";
 import FullLogo from "../assets/FullLogo.svg";
 import chat from "../assets/chat.svg";
+import { Post } from "../components";
 
 export const OverviewPage = () => {
   const isLogged = true;

@@ -3,9 +3,9 @@ import Button from "../components/Button";
 import { Flex, Text, colors } from "../styles/theme";
 import profile from "../assets/profile.svg";
 import update_icon from "../assets/update_icon.svg";
-import Input from "../components/Input";
 import { useState } from "react";
 import { TextArea } from "../components/TextArea";
+import { Input } from "../components";
 
 export const MypageUpdate = () => {
   const [name, setName] = useState("");
