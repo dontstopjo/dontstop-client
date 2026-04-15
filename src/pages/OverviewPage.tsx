@@ -1,292 +1,48 @@
-import { useState } from "react";
-import type { PostSchemaType } from "../types";
+import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import { colors, Flex, Text } from "../styles/theme";
 import styled from "@emotion/styled";
 import { Post } from "../components";
 import { FullLogo, ChatIcon } from "../assets";
+import { getPosts } from "../apis/posts";
 
 export const OverviewPage = () => {
-  const isLogged = true;
+  const navigate = useNavigate();
+  const isLogged = !!localStorage.getItem("accessToken");
 
-  const [datas, setDatas] = useState<PostSchemaType[]>([
-    {
-      id: 1,
-      title: "집에서",
-      keyword: ["ddd", "kkfk"],
-      description: "12345678",
-      views: 100,
-      likes: 1000,
-      authorName: "김소희",
-      imgURL:
-        "https://image.msscdn.net/cms/v2/content/file_1756347169119_43077299_tdh8ah.jpg",
-    },
-    {
-      id: 1,
-      title: "집에서",
-      keyword: ["ddd", "kkfk"],
-      description: "12345678",
-      views: 100,
-      likes: 1000,
-      authorName: "김소희",
-      imgURL:
-        "https://image.msscdn.net/cms/v2/content/file_1756347169119_43077299_tdh8ah.jpg",
-    },
-    {
-      id: 1,
-      title: "집에서",
-      keyword: ["ddd", "kkfk"],
-      description: "12345678",
-      views: 100,
-      likes: 1000,
-      authorName: "김소희",
-      imgURL:
-        "https://image.msscdn.net/cms/v2/content/file_1756347169119_43077299_tdh8ah.jpg",
-    },
-    {
-      id: 1,
-      title: "집에서",
-      keyword: ["ddd", "kkfk"],
-      description: "12345678",
-      views: 100,
-      likes: 1000,
-      authorName: "김소희",
-      imgURL:
-        "https://image.msscdn.net/cms/v2/content/file_1756347169119_43077299_tdh8ah.jpg",
-    },
-    {
-      id: 1,
-      title: "집에서",
-      keyword: ["#ddd", "#kkfk"],
-      description: "12345678",
-      views: 100,
-      likes: 1000,
-      authorName: "김소희",
-      imgURL:
-        "https://image.msscdn.net/cms/v2/content/file_1756347169119_43077299_tdh8ah.jpg",
-    },
-    {
-      id: 1,
-      title: "집에서",
-      keyword: ["#ddd", "#kkfk"],
-      description: "12345678",
-      views: 100,
-      likes: 1000,
-      authorName: "김소희",
-      imgURL:
-        "https://image.msscdn.net/cms/v2/content/file_1756347169119_43077299_tdh8ah.jpg",
-    },
-    {
-      id: 1,
-      title: "집에서",
-      keyword: ["#ddd", "#kkfk"],
-      description: "12345678",
-      views: 100,
-      likes: 1000,
-      authorName: "김소희",
-      imgURL:
-        "https://image.msscdn.net/cms/v2/content/file_1756347169119_43077299_tdh8ah.jpg",
-    },
-    {
-      id: 1,
-      title: "집에서",
-      keyword: ["#ddd", "#kkfk"],
-      description: "12345678",
-      views: 100,
-      likes: 1000,
-      authorName: "김소희",
-      imgURL:
-        "https://image.msscdn.net/cms/v2/content/file_1756347169119_43077299_tdh8ah.jpg",
-    },
-    {
-      id: 1,
-      title: "집에서",
-      keyword: ["#ddd", "#kkfk"],
-      description: "12345678",
-      views: 100,
-      likes: 1000,
-      authorName: "김소희",
-      imgURL:
-        "https://image.msscdn.net/cms/v2/content/file_1756347169119_43077299_tdh8ah.jpg",
-    },
-    {
-      id: 1,
-      title: "집에서",
-      keyword: ["#ddd", "#kkfk"],
-      description: "12345678",
-      views: 100,
-      likes: 1000,
-      authorName: "김소희",
-      imgURL:
-        "https://image.msscdn.net/cms/v2/content/file_1756347169119_43077299_tdh8ah.jpg",
-    },
-    {
-      id: 1,
-      title: "집에서",
-      keyword: ["#ddd", "#kkfk"],
-      description: "12345678",
-      views: 100,
-      likes: 1000,
-      authorName: "김소희",
-      imgURL:
-        "https://image.msscdn.net/cms/v2/content/file_1756347169119_43077299_tdh8ah.jpg",
-    },
-    {
-      id: 1,
-      title: "집에서",
-      keyword: ["#ddd", "#kkfk"],
-      description: "12345678",
-      views: 100,
-      likes: 1000,
-      authorName: "김소희",
-      imgURL:
-        "https://image.msscdn.net/cms/v2/content/file_1756347169119_43077299_tdh8ah.jpg",
-    },
-    {
-      id: 1,
-      title: "집에서",
-      keyword: ["#ddd", "#kkfk"],
-      description: "12345678",
-      views: 100,
-      likes: 1000,
-      authorName: "김소희",
-      imgURL:
-        "https://image.msscdn.net/cms/v2/content/file_1756347169119_43077299_tdh8ah.jpg",
-    },
-    {
-      id: 1,
-      title: "집에서",
-      keyword: ["#ddd", "#kkfk"],
-      description: "12345678",
-      views: 100,
-      likes: 1000,
-      authorName: "김소희",
-      imgURL:
-        "https://image.msscdn.net/cms/v2/content/file_1756347169119_43077299_tdh8ah.jpg",
-    },
-    {
-      id: 1,
-      title: "집에서",
-      keyword: ["#ddd", "#kkfk"],
-      description: "12345678",
-      views: 100,
-      likes: 1000,
-      authorName: "김소희",
-      imgURL:
-        "https://image.msscdn.net/cms/v2/content/file_1756347169119_43077299_tdh8ah.jpg",
-    },
-    {
-      id: 1,
-      title: "집에서",
-      keyword: ["#ddd", "#kkfk"],
-      description: "12345678",
-      views: 100,
-      likes: 1000,
-      authorName: "김소희",
-      imgURL:
-        "https://image.msscdn.net/cms/v2/content/file_1756347169119_43077299_tdh8ah.jpg",
-    },
-    {
-      id: 1,
-      title: "집에서",
-      keyword: ["#ddd", "#kkfk"],
-      description: "12345678",
-      views: 100,
-      likes: 1000,
-      authorName: "김소희",
-      imgURL:
-        "https://image.msscdn.net/cms/v2/content/file_1756347169119_43077299_tdh8ah.jpg",
-    },
-    {
-      id: 1,
-      title: "집에서",
-      keyword: ["#ddd", "#kkfk"],
-      description: "12345678",
-      views: 100,
-      likes: 1000,
-      authorName: "김소희",
-      imgURL:
-        "https://image.msscdn.net/cms/v2/content/file_1756347169119_43077299_tdh8ah.jpg",
-    },
-    {
-      id: 1,
-      title: "집에서",
-      keyword: ["#ddd", "#kkfk"],
-      description: "12345678",
-      views: 100,
-      likes: 1000,
-      authorName: "김소희",
-      imgURL:
-        "https://image.msscdn.net/cms/v2/content/file_1756347169119_43077299_tdh8ah.jpg",
-    },
-    {
-      id: 1,
-      title: "집에서",
-      keyword: ["#ddd", "#kkfk"],
-      description: "12345678",
-      views: 100,
-      likes: 1000,
-      authorName: "김소희",
-      imgURL:
-        "https://image.msscdn.net/cms/v2/content/file_1756347169119_43077299_tdh8ah.jpg",
-    },
-    {
-      id: 1,
-      title: "집에서",
-      keyword: ["#ddd", "#kkfk"],
-      description: "12345678",
-      views: 100,
-      likes: 1000,
-      authorName: "김소희",
-      imgURL:
-        "https://image.msscdn.net/cms/v2/content/file_1756347169119_43077299_tdh8ah.jpg",
-    },
-    {
-      id: 1,
-      title: "집에서",
-      keyword: ["#ddd", "#kkfk"],
-      description: "12345678",
-      views: 100,
-      likes: 1000,
-      authorName: "김소희",
-      imgURL:
-        "https://image.msscdn.net/cms/v2/content/file_1756347169119_43077299_tdh8ah.jpg",
-    },
-    {
-      id: 1,
-      title: "집에서",
-      keyword: ["#ddd", "#kkfk"],
-      description: "12345678",
-      views: 100,
-      likes: 1000,
-      authorName: "김소희",
-      imgURL:
-        "https://image.msscdn.net/cms/v2/content/file_1756347169119_43077299_tdh8ah.jpg",
-    },
-    {
-      id: 1,
-      title: "집에서",
-      keyword: ["ddd", "kkfk"],
-      description: "12345678",
-      views: 100,
-      likes: 1000,
-      authorName: "김소희",
-      imgURL:
-        "https://image.msscdn.net/cms/v2/content/file_1756347169119_43077299_tdh8ah.jpg",
-    },
-  ]);
+  const { data: posts = [], isLoading } = useQuery({
+    queryKey: ["posts"],
+    queryFn: getPosts,
+  });
+
+  const handleLoginClick = () => {
+    window.location.href = `${import.meta.env.VITE_API_BASE_URL.replace(/\/+$/, "")}/oauth2/authorization/kakao`;
+  };
+
+  if (isLoading) {
+    return (
+      <Flex alignItems="center" justifyContent="center" width="100%" paddingTop="100px">
+        <Text fontSize={16} fontWeight={400} color={colors.gray[400]}>
+          불러오는 중...
+        </Text>
+      </Flex>
+    );
+  }
 
   return (
     <>
       <Flex alignItems="center" width="100%">
         <Flex width="fit-content" flexWrap="wrap" gap={24} height="fit-content">
-          {datas.map((data) => (
+          {posts.map((post) => (
             <Post
-              title={data.title}
-              authorName={data.authorName}
-              keyword={data.keyword}
-              views={data.views}
-              likes={data.likes}
-              imgURL={data.imgURL}
+              key={post.postId}
+              title={post.title}
+              authorName={post.username}
+              keyword={post.subStyles}
+              views={post.views}
+              likes={post.likes}
+              imgURL={post.imageURL}
+              onClick={() => navigate(`/detail/${post.postId}`)}
             />
           ))}
         </Flex>
@@ -306,7 +62,7 @@ export const OverviewPage = () => {
               </Text>
             </Flex>
 
-            <KakaoButton>
+            <KakaoButton onClick={handleLoginClick}>
               <img src={ChatIcon} />
               카카오 로그인
             </KakaoButton>

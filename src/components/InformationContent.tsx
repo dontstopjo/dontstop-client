@@ -1,13 +1,13 @@
 import styled from '@emotion/styled';
 import { colors, Flex, Text } from '../styles/theme';
 import { link } from '../assets';
-import type { InformationSchemaType } from '../types';
+import type { FashionLinkType } from '../types';
 
 export const InformationContent = ({
   title,
   linkUrl,
   img,
-}: InformationSchemaType) => {
+}: FashionLinkType) => {
   return (
     <Flex isColumn gap={8}>
       {img ? <ImgWrapper src={img} /> : <NotImgWrapper></NotImgWrapper>}

@@ -6,6 +6,7 @@ interface InputType {
   placeholder: string;
   type: "text" | "search";
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   className?: string;
   value: string;
 }
@@ -14,12 +15,19 @@ export const Input = ({
   placeholder,
   type,
   onChange,
+  onKeyDown,
   className,
+  value,
 }: InputType) => {
   return (
     <InputContainer className={className}>
       {type == "search" && <SearchIcon src={searchIcon} alt="검색" />}
-      <StyledInput placeholder={placeholder} onChange={onChange} />
+      <StyledInput
+        placeholder={placeholder}
+        onChange={onChange}
+        onKeyDown={onKeyDown}
+        value={value}
+      />
     </InputContainer>
   );
 };

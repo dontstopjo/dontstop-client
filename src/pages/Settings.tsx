@@ -1,8 +1,36 @@
 import styled from "@emotion/styled";
 import { colors, Flex, Text } from "../styles/theme";
 import { profileIcon, LogoutIcon, SignoutIcon } from "../assets";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
+import { getMe } from "../apis/me";
+import { logout } from "../apis/auth";
 
 export const Settings = () => {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  const { data: user } = useQuery({
+    queryKey: ["me"],
+    queryFn: getMe,
+  });
+
+  const logoutMutation = useMutation({
+    mutationFn: logout,
+    onSuccess: () => {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      queryClient.clear();
+      navigate("/");
+    },
+    onError: () => {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      queryClient.clear();
+      navigate("/");
+    },
+  });
+
   return (
     <Flex
       width="100%"
@@ -19,15 +47,19 @@ export const Settings = () => {
 
         <Flex gap={40} alignItems="center">
           <Profile>
-            <img src={profileIcon} alt="프로필" />
+            <img
+              src={user?.profileImageURL || profileIcon}
+              alt="프로필"
+              style={{ width: "80px", height: "80px", borderRadius: "50%", objectFit: "cover" }}
+            />
           </Profile>
 
           <Flex isColumn={true} gap={12}>
             <Text fontSize={24} fontWeight={600}>
-              라면왕 슈
+              {user?.username ?? ""}
             </Text>
             <Text fontSize={20} fontWeight={400} color={`${colors.gray[500]}`}>
-              안녕하세요. 전 패셔니스타 슈에요
+              {user?.description ?? ""}
             </Text>
           </Flex>
         </Flex>
@@ -39,7 +71,7 @@ export const Settings = () => {
         </Text>
 
         <Flex isColumn={true}>
-          <SettingButton>
+          <SettingButton onClick={() => logoutMutation.mutate()}>
             <Flex gap={16} alignItems="center">
               <img src={LogoutIcon} />
               <Text fontSize={20} fontWeight={600}>

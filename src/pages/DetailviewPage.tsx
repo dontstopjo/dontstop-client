@@ -1,11 +1,8 @@
 import styled from "@emotion/styled";
 import { colors, Flex, Text } from "../styles/theme";
 import { useState } from "react";
-import type {
-  CommentSchemaType,
-  InformationSchemaType,
-  PostSchemaType,
-} from "../types";
+import { useParams, useNavigate } from "react-router-dom";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   CommentContent,
   InformationContent,
@@ -14,250 +11,113 @@ import {
   Post,
 } from "../components";
 import { SendIcon } from "../assets";
+import {
+  getPostDetail,
+  getPosts,
+  likePost,
+  unlikePost,
+  savePost,
+  unsavePost,
+  createComment,
+} from "../apis/posts";
 
 export const DetailviewPage = () => {
-  const [datas, setDatas] = useState<PostSchemaType>({
-    id: 1,
-    title: "집에서",
-    keyword: ["#ddd", "#kkfk"],
-    description: "12345678",
-    views: 100,
-    likes: 1000,
-    authorName: "김소희",
-    imgURL:
-      "https://image.msscdn.net/cms/v2/content/file_1756347169119_43077299_tdh8ah.jpg",
-  });
+  const { id } = useParams<{ id: string }>();
+  const postId = Number(id);
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const [commentValue, setCommentValue] = useState<string>("");
 
-  const [commentDatas, setCommentDatas] = useState<CommentSchemaType[]>([
-    {
-      id: 1,
-      authorName: "김소희",
-      comment: "안녕하세요",
-      img: "",
-    },
-    {
-      id: 1,
-      authorName: "김소희",
-      comment: "안녕하세요",
-      img: "",
-    },
-  ]);
+  const { data: post, isLoading } = useQuery({
+    queryKey: ["posts", postId],
+    queryFn: () => getPostDetail(postId),
+    enabled: !!postId,
+  });
 
-  const [outfitInfoDatas, setOutfitInfoDatas] = useState<
-    InformationSchemaType[]
-  >([
-    {
-      id: 1,
-      title: "상의",
-      linkUrl: "https://applink.a-bly.com/pjb6on",
-      img: "https://d3ha2047wt6x28.cloudfront.net/b5uU3LiEIOI/pr:GOODS_DETAIL/czM6Ly9hYmx5LWltYWdlLWxlZ2FjeS9kYXRhL2dvb2RzLzIwMjUxMjI5XzE3NjcwMTU2NDc3Mjk3NTFtLmpwZWc",
-    },
-    {
-      id: 1,
-      title: "상의",
-      linkUrl: "https://applink.a-bly.com/pjb6on",
-      img: "https://d3ha2047wt6x28.cloudfront.net/b5uU3LiEIOI/pr:GOODS_DETAIL/czM6Ly9hYmx5LWltYWdlLWxlZ2FjeS9kYXRhL2dvb2RzLzIwMjUxMjI5XzE3NjcwMTU2NDc3Mjk3NTFtLmpwZWc",
-    },
-    {
-      id: 1,
-      title: "상의",
-      linkUrl: "https://applink.a-bly.com/pjb6on",
-      img: "https://d3ha2047wt6x28.cloudfront.net/b5uU3LiEIOI/pr:GOODS_DETAIL/czM6Ly9hYmx5LWltYWdlLWxlZ2FjeS9kYXRhL2dvb2RzLzIwMjUxMjI5XzE3NjcwMTU2NDc3Mjk3NTFtLmpwZWc",
-    },
-    {
-      id: 1,
-      title: "상의",
-      linkUrl: "https://applink.a-bly.com/pjb6on",
-      img: "https://d3ha2047wt6x28.cloudfront.net/b5uU3LiEIOI/pr:GOODS_DETAIL/czM6Ly9hYmx5LWltYWdlLWxlZ2FjeS9kYXRhL2dvb2RzLzIwMjUxMjI5XzE3NjcwMTU2NDc3Mjk3NTFtLmpwZWc",
-    },
-    {
-      id: 1,
-      title: "상의",
-      linkUrl: "https://applink.a-bly.com/pjb6on",
-      img: "https://d3ha2047wt6x28.cloudfront.net/b5uU3LiEIOI/pr:GOODS_DETAIL/czM6Ly9hYmx5LWltYWdlLWxlZ2FjeS9kYXRhL2dvb2RzLzIwMjUxMjI5XzE3NjcwMTU2NDc3Mjk3NTFtLmpwZWc",
-    },
-  ]);
+  const { data: allPosts = [] } = useQuery({
+    queryKey: ["posts"],
+    queryFn: getPosts,
+  });
 
-  const [anotherPostdatas, setAnotherPostDatas] = useState<PostSchemaType[]>([
-    {
-      id: 1,
-      title: "집에서",
-      keyword: ["ddd", "kkfk"],
-      description: "12345678",
-      views: 100,
-      likes: 1000,
-      authorName: "김소희",
-      imgURL:
-        "https://image.msscdn.net/cms/v2/content/file_1756347169119_43077299_tdh8ah.jpg",
+  const otherPosts = allPosts.filter((p) => p.postId !== postId);
+
+  const likeMutation = useMutation({
+    mutationFn: () =>
+      post?.isLiked ? unlikePost(postId) : likePost(postId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["posts", postId] });
     },
-    {
-      id: 1,
-      title: "집에서",
-      keyword: ["#ddd", "#kkfk"],
-      description: "12345678",
-      views: 100,
-      likes: 1000,
-      authorName: "김소희",
-      imgURL:
-        "https://image.msscdn.net/cms/v2/content/file_1756347169119_43077299_tdh8ah.jpg",
+  });
+
+  const saveMutation = useMutation({
+    mutationFn: () =>
+      post?.isSaved ? unsavePost(postId) : savePost(postId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["posts", postId] });
     },
-    {
-      id: 1,
-      title: "집에서",
-      keyword: ["#ddd", "#kkfk"],
-      description: "12345678",
-      views: 100,
-      likes: 1000,
-      authorName: "김소희",
-      imgURL:
-        "https://image.msscdn.net/cms/v2/content/file_1756347169119_43077299_tdh8ah.jpg",
+  });
+
+  const commentMutation = useMutation({
+    mutationFn: () => createComment(postId, commentValue),
+    onSuccess: () => {
+      setCommentValue("");
+      queryClient.invalidateQueries({ queryKey: ["posts", postId] });
     },
-    {
-      id: 1,
-      title: "집에서",
-      keyword: ["#ddd", "#kkfk"],
-      description: "12345678",
-      views: 100,
-      likes: 1000,
-      authorName: "김소희",
-      imgURL:
-        "https://image.msscdn.net/cms/v2/content/file_1756347169119_43077299_tdh8ah.jpg",
-    },
-    {
-      id: 1,
-      title: "집에서",
-      keyword: ["#ddd", "#kkfk"],
-      description: "12345678",
-      views: 100,
-      likes: 1000,
-      authorName: "김소희",
-      imgURL:
-        "https://image.msscdn.net/cms/v2/content/file_1756347169119_43077299_tdh8ah.jpg",
-    },
-    {
-      id: 1,
-      title: "집에서",
-      keyword: ["#ddd", "#kkfk"],
-      description: "12345678",
-      views: 100,
-      likes: 1000,
-      authorName: "김소희",
-      imgURL:
-        "https://image.msscdn.net/cms/v2/content/file_1756347169119_43077299_tdh8ah.jpg",
-    },
-    {
-      id: 1,
-      title: "집에서",
-      keyword: ["#ddd", "#kkfk"],
-      description: "12345678",
-      views: 100,
-      likes: 1000,
-      authorName: "김소희",
-      imgURL:
-        "https://image.msscdn.net/cms/v2/content/file_1756347169119_43077299_tdh8ah.jpg",
-    },
-    {
-      id: 1,
-      title: "집에서",
-      keyword: ["#ddd", "#kkfk"],
-      description: "12345678",
-      views: 100,
-      likes: 1000,
-      authorName: "김소희",
-      imgURL:
-        "https://image.msscdn.net/cms/v2/content/file_1756347169119_43077299_tdh8ah.jpg",
-    },
-    {
-      id: 1,
-      title: "집에서",
-      keyword: ["#ddd", "#kkfk"],
-      description: "12345678",
-      views: 100,
-      likes: 1000,
-      authorName: "김소희",
-      imgURL:
-        "https://image.msscdn.net/cms/v2/content/file_1756347169119_43077299_tdh8ah.jpg",
-    },
-    {
-      id: 1,
-      title: "집에서",
-      keyword: ["#ddd", "#kkfk"],
-      description: "12345678",
-      views: 100,
-      likes: 1000,
-      authorName: "김소희",
-      imgURL:
-        "https://image.msscdn.net/cms/v2/content/file_1756347169119_43077299_tdh8ah.jpg",
-    },
-    {
-      id: 1,
-      title: "집에서",
-      keyword: ["#ddd", "#kkfk"],
-      description: "12345678",
-      views: 100,
-      likes: 1000,
-      authorName: "김소희",
-      imgURL:
-        "https://image.msscdn.net/cms/v2/content/file_1756347169119_43077299_tdh8ah.jpg",
-    },
-    {
-      id: 1,
-      title: "집에서",
-      keyword: ["#ddd", "#kkfk"],
-      description: "12345678",
-      views: 100,
-      likes: 1000,
-      authorName: "김소희",
-      imgURL:
-        "https://image.msscdn.net/cms/v2/content/file_1756347169119_43077299_tdh8ah.jpg",
-    },
-    {
-      id: 1,
-      title: "집에서",
-      keyword: ["#ddd", "#kkfk"],
-      description: "12345678",
-      views: 100,
-      likes: 1000,
-      authorName: "김소희",
-      imgURL:
-        "https://image.msscdn.net/cms/v2/content/file_1756347169119_43077299_tdh8ah.jpg",
-    },
-    {
-      id: 1,
-      title: "집에서",
-      keyword: ["#ddd", "#kkfk"],
-      description: "12345678",
-      views: 100,
-      likes: 1000,
-      authorName: "김소희",
-      imgURL:
-        "https://image.msscdn.net/cms/v2/content/file_1756347169119_43077299_tdh8ah.jpg",
-    },
-  ]);
+  });
 
   const handleCommentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCommentValue(e.target.value);
   };
 
+  const handleCommentSubmit = () => {
+    if (!commentValue.trim()) return;
+    commentMutation.mutate();
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") handleCommentSubmit();
+  };
+
+  if (isLoading || !post) {
+    return (
+      <Flex alignItems="center" justifyContent="center" width="100%" paddingTop="100px">
+        <Text fontSize={16} fontWeight={400} color={colors.gray[400]}>
+          불러오는 중...
+        </Text>
+      </Flex>
+    );
+  }
+
   return (
     <Flex gap={70}>
       <ContentWrapper>
-        <ImgWrapper />
+        <ImgWrapper src={post.imageURLs[0]} />
         <Flex isColumn gap={24}>
           <Flex isColumn gap={12} width="100%">
             <Flex justifyContent="space-between" width="100%">
               <Flex alignItems="center" gap={12}>
-                <ProfileContent></ProfileContent>
+                <ProfileContent src={post.profileImageURL} alt={post.username} />
                 <Text fontSize={16} fontWeight={600} color={colors.gray[1000]}>
-                  {datas.authorName}
+                  {post.username}
                 </Text>
               </Flex>
               <Flex gap={8} alignItems="center">
-                <PostActions number={100} type="eye" />
-                <PostActions number={100} type="heart" />
-                <PostActions number={100} type="save" />
+                <PostActions number={post.views} type="eye" />
+                <PostActions
+                  number={post.likes}
+                  type="heart"
+                  postId={postId}
+                  isActive={post.isLiked}
+                  onToggle={() => likeMutation.mutate()}
+                />
+                <PostActions
+                  number={post.saves}
+                  type="save"
+                  postId={postId}
+                  isActive={post.isSaved}
+                  onToggle={() => saveMutation.mutate()}
+                />
               </Flex>
             </Flex>
             <Flex
@@ -266,17 +126,17 @@ export const DetailviewPage = () => {
               alignItems="center"
             >
               <Text fontSize={20} fontWeight={600}>
-                {datas.title}
+                {post.title}
               </Text>
             </Flex>
             <Text fontSize={16} fontWeight={400} color={colors.gray[400]}>
-              {datas.description}
+              {post.content}
             </Text>
           </Flex>
           <Flex gap={12}>
-            {datas.keyword.map((data) => (
-              <Text fontSize={14} fontWeight={600} color={colors.gray[800]}>
-                #{data}
+            {post.subStyles.map((style, i) => (
+              <Text key={i} fontSize={14} fontWeight={600} color={colors.gray[800]}>
+                #{style}
               </Text>
             ))}
           </Flex>
@@ -285,46 +145,49 @@ export const DetailviewPage = () => {
           <Flex gap={8} alignItems="center">
             <Input
               onChange={handleCommentChange}
+              onKeyDown={handleKeyDown}
               value={commentValue}
               type="text"
               placeholder="댓글을 입력하세요.."
             />
-            <SendButton>
+            <SendButton onClick={handleCommentSubmit}>
               <img src={SendIcon} alt="send" />
             </SendButton>
           </Flex>
           <Flex isColumn gap={20}>
-            {commentDatas.map((data) => (
+            {post.comments.map((comment, i) => (
               <CommentContent
-                key={data.id}
-                authorName={data.authorName}
-                comment={data.comment}
-                img={data.img}
+                key={i}
+                username={comment.username}
+                text={comment.text}
+                profileImageURL={comment.profileImageURL}
               />
             ))}
           </Flex>
         </CommentWrapper>
         <Flex gapX={44} gapY={28} width="100%" flexWrap="wrap">
-          {outfitInfoDatas.map((data) => (
+          {post.links.map((link, i) => (
             <InformationContent
-              title={data.title}
-              img={data.img}
-              key={data.id}
-              linkUrl={data.linkUrl}
+              key={i}
+              title={link.title}
+              img={link.img}
+              linkUrl={link.linkUrl}
             />
           ))}
         </Flex>
       </ContentWrapper>
       <Flex>
         <Flex width="fit-content" flexWrap="wrap" gap={24} height="fit-content">
-          {anotherPostdatas.map((data) => (
+          {otherPosts.map((p) => (
             <Post
-              title={data.title}
-              authorName={data.authorName}
-              keyword={data.keyword}
-              views={data.views}
-              likes={data.likes}
-              imgURL={data.imgURL}
+              key={p.postId}
+              title={p.title}
+              authorName={p.username}
+              keyword={p.subStyles}
+              views={p.views}
+              likes={p.likes}
+              imgURL={p.imageURL}
+              onClick={() => navigate(`/detail/${p.postId}`)}
             />
           ))}
         </Flex>
@@ -366,6 +229,7 @@ const ImgWrapper = styled.img`
   height: 615px;
   border-radius: 20px;
   background-color: ${colors.gray[100]};
+  object-fit: cover;
 `;
 
 const ContentWrapper = styled.div`

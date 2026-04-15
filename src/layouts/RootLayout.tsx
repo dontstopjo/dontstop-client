@@ -1,12 +1,11 @@
-import styled from '@emotion/styled';
-import { Outlet } from 'react-router-dom';
-import { Footer, SideBar } from '../components';
-import { Flex } from '../styles/theme';
-import { useState } from 'react';
-import Input from '../components/Input';
+import styled from "@emotion/styled";
+import { Outlet } from "react-router-dom";
+import { Footer, Input, SideBar } from "../components";
+import { Flex } from "../styles/theme";
+import { useState } from "react";
 
 export const RootLayout = () => {
-  const [searchValue, setSearchValue] = useState<string>('');
+  const [searchValue, setSearchValue] = useState<string>("");
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value);

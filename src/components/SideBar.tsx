@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import styled from "@emotion/styled";
 import {
   AddIcon,
@@ -49,7 +50,22 @@ export const SideBar = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
 
-  const accessToken = "dsddsds";
+  const [accessToken, setAccessToken] = useState<string | null>(
+    localStorage.getItem("accessToken")
+  );
+
+  useEffect(() => {
+    const handleStorage = () => {
+      setAccessToken(localStorage.getItem("accessToken"));
+    };
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
+  }, []);
+
+  const handleLoginClick = () => {
+    window.location.href = `${import.meta.env.VITE_API_BASE_URL.replace(/\/+$/, "")}/oauth2/authorization/kakao`;
+  };
+
   return (
     <SideBarWrapper>
       <LogoWrapper>
@@ -57,6 +73,7 @@ export const SideBar = () => {
         <NavWrapper>
           {navData.map((data) => (
             <NavContent
+              key={data.path}
               onClick={() => navigate(data.path)}
               isNav={pathname === data.path}
               icon={data.icon}
@@ -70,10 +87,10 @@ export const SideBar = () => {
           onClick={() => navigate("/setting")}
           content="설정"
           icon={SettingIcon}
-          isNav
+          isNav={pathname === "/setting"}
         />
       ) : (
-        <NavContent content="로그인" icon={LoginIcon} isNav />
+        <NavContent content="로그인" icon={LoginIcon} onClick={handleLoginClick} />
       )}
     </SideBarWrapper>
   );

@@ -6,6 +6,7 @@ import {
   Mypage,
   MypageUpdate,
   Settings,
+  OAuthCallbackPage,
 } from "./pages";
 
 export const router = createBrowserRouter([
@@ -34,5 +35,9 @@ export const router = createBrowserRouter([
         element: <Settings />,
       },
     ],
+  },
+  {
+    path: "/oauth2/success",
+    element: <OAuthCallbackPage />,
   },
 ]);
