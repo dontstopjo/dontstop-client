@@ -1,7 +1,6 @@
 import { useState } from "react";
 import styled from "@emotion/styled";
 import { colors, Flex, Text } from "../styles/theme";
-import { Post } from "../components";
 import { profileIcon, updateIcon } from "../assets";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
