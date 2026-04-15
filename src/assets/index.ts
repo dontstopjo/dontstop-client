@@ -8,7 +8,7 @@ export * from "./SaveButton";
 export * from "./Eye";
 export { default as icon } from "./icon.svg";
 export { default as FullLogo } from "./FullLogo.svg";
-export { default as link } from "./link.svg";
+export { default as link } from "./Link.svg";
 export { default as SendIcon } from "./SendIcon.svg";
 export { default as ChatIcon } from "./chat.svg";
 export { default as heartIcon } from "./heart_icon.svg";
