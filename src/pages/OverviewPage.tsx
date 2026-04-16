@@ -28,7 +28,6 @@ export const OverviewPage = () => {
       </Flex>
     );
   }
-
   return (
     <>
       <Flex alignItems="center" width="100%">

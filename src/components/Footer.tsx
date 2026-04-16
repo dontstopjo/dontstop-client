@@ -6,8 +6,8 @@ export const Footer = () => {
     <FooterWrapper>
       <ContentWrapper>
         <Logo src={FullLogo} alt="로고" />
-        <SubTitle>OOTDrop에서 다양한 스타일을 발견해보세요</SubTitle>
-      </ContentWrapper>
+          <SubTitle>OOTDrop에서 다양한 스타일을 발견해보세요</SubTitle>
+      </ContentWrapper> 
       <ContentWrapper>
         <ContentTitle>©오오티디드랍</ContentTitle>
         <ContentTitle>
