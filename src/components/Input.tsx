@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import search_icon from '../assets/searchIcon.svg';
-import { colors } from '../styles/theme';
+import { colors, Flex, Text } from '../styles/theme';
 
 interface InputType {
   placeholder: string;
@@ -8,19 +8,33 @@ interface InputType {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   className?: string;
   value: string;
+  label?: string;
+  width?: string;
 }
 
-const Input = ({ placeholder, type, onChange, className }: InputType) => {
+const Input = ({
+  label,
+  placeholder,
+  type,
+  onChange,
+  className,
+  width,
+}: InputType) => {
   return (
-    <InputContainer className={className}>
-      {type == 'search' && <SearchIcon src={search_icon} alt="검색" />}
-      <StyledInput placeholder={placeholder} onChange={onChange} />
-    </InputContainer>
+    <Flex isColumn gap={8} width={width ? width : '100%'}>
+      <Text fontSize={16} color={colors.gray[900]}>
+        {label}
+      </Text>
+      <InputContainer width={width} className={className}>
+        {type == 'search' && <SearchIcon src={search_icon} alt="검색" />}
+        <StyledInput placeholder={placeholder} onChange={onChange} />
+      </InputContainer>
+    </Flex>
   );
 };
 
-const InputContainer = styled.div`
-  width: 100%;
+const InputContainer = styled.div<{ width: string | undefined }>`
+  width: ${({ width }) => (width ? width : '100%')};
   font-size: 16px;
   background-color: #eeeded;
   border-radius: 10px;

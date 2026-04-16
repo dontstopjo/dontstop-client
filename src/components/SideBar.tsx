@@ -25,7 +25,7 @@ const navData = [
   {
     icon: AddIcon,
     content: '글 작성',
-    path: '/add',
+    path: '/create',
   },
   {
     icon: MyPageIcon,

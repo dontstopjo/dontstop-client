@@ -3,3 +3,8 @@ export * from './SideBar';
 export * from './CommentContent';
 export * from './InformationContent';
 export * from './PostActions';
+export * from './ImgSelector';
+export * from './TextArea';
+export * from './DropDown';
+export * from './SubStyleSelector';
+export * from './Toggle';
