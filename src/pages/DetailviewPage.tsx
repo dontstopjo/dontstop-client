@@ -20,6 +20,7 @@ import {
   unsavePost,
   createComment,
 } from "../apis/posts";
+import { apiToSubStyle } from "../types/styleType";
 
 const toFullImageUrl = (url: string) => {
   if (!url) return "";
@@ -185,7 +186,7 @@ export const DetailviewPage = () => {
                 fontWeight={600}
                 color={colors.gray[800]}
               >
-                #{style}
+                #{apiToSubStyle[style] ?? style}
               </Text>
             ))}
           </Flex>

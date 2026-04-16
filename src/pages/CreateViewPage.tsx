@@ -10,7 +10,7 @@ import {
 import type { CreatePostSchemaType } from '../types';
 import { colors, Flex, Text } from '../styles/theme';
 import { Input } from '../components/Input';
-import { mainStyles } from '../types/styleType';
+import { mainStyles, mainStyleToApi, subStyleToApi } from '../types/styleType';
 import { Button } from '../components/Button';
 import { Plus } from '../assets';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -49,8 +49,8 @@ export const CreateViewPage = () => {
       return createPost({
         title: datas.title,
         content: datas.description,
-        mainStyle: datas.mainKeyword,
-        subStyles: datas.subkeyword ?? [],
+        mainStyle: mainStyleToApi[datas.mainKeyword as keyof typeof mainStyleToApi] ?? datas.mainKeyword,
+        subStyles: (datas.subkeyword ?? []).map((s) => subStyleToApi[s] ?? s),
         links,
         isPublic: !datas.isPrivate,
         files: validFiles,

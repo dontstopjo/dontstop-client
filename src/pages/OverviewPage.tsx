@@ -5,6 +5,7 @@ import styled from "@emotion/styled";
 import { Post } from "../components";
 import { FullLogo, ChatIcon } from "../assets";
 import { getPosts } from "../apis/posts";
+import { apiToSubStyle } from "../types/styleType";
 
 export const OverviewPage = () => {
   const navigate = useNavigate();
@@ -38,7 +39,7 @@ export const OverviewPage = () => {
               key={post.postId}
               title={post.title}
               authorName={post.username}
-              keyword={post.subStyles}
+              keyword={post.subStyles.map((s) => apiToSubStyle[s] ?? s)}
               views={post.views}
               likes={post.likes}
               imgURL={post.imageURL}

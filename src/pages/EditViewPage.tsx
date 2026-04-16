@@ -10,7 +10,7 @@ import {
 import type { CreatePostSchemaType } from '../types';
 import { colors, Flex, Text } from '../styles/theme';
 import { Input } from '../components/Input';
-import { mainStyles } from '../types/styleType';
+import { mainStyles, mainStyleToApi, apiToMainStyle, subStyleToApi, apiToSubStyle } from '../types/styleType';
 import { Button } from '../components/Button';
 import { Plus } from '../assets';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -48,12 +48,13 @@ export const EditViewPage = () => {
   // 기존 게시글 데이터 세팅
   useEffect(() => {
     if (post) {
+      const displaySubStyles = post.subStyles.map((s) => apiToSubStyle[s] ?? s);
       setDatas({
         img: post.imageURLs,
         title: post.title,
         description: post.content,
-        mainKeyword: post.mainStyle,
-        subkeyword: post.subStyles,
+        mainKeyword: apiToMainStyle[post.mainStyle] ?? post.mainStyle,
+        subkeyword: displaySubStyles,
         link: post.links.length > 0
           ? post.links.map((l) => ({
               id: crypto.randomUUID(),
@@ -64,7 +65,7 @@ export const EditViewPage = () => {
           : [{ id: crypto.randomUUID(), title: '', link: '', keyword: '' }],
         isPrivate: false,
       });
-      setSubStyleSelected(post.subStyles);
+      setSubStyleSelected(displaySubStyles);
       setPreviews(
         post.imageURLs
           .slice(0, IMG_COUNT)
@@ -91,8 +92,8 @@ export const EditViewPage = () => {
         postId,
         title: datas.title,
         content: datas.description,
-        mainStyle: datas.mainKeyword,
-        subStyles: datas.subkeyword ?? [],
+        mainStyle: mainStyleToApi[datas.mainKeyword as keyof typeof mainStyleToApi] ?? datas.mainKeyword,
+        subStyles: (datas.subkeyword ?? []).map((s) => subStyleToApi[s] ?? s),
         links,
         isPublic: !datas.isPrivate,
         files: validFiles,
