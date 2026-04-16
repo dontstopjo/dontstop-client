@@ -7,6 +7,8 @@ import {
   MypageUpdate,
   Settings,
   OAuthCallbackPage,
+   CreateViewPage,
+  EditViewPage,
   OAuthFailurePage,
 } from "./pages";
 
@@ -24,6 +26,12 @@ export const router = createBrowserRouter([
         element: <DetailviewPage />,
       },
       {
+        path: '/create',
+        element: <CreateViewPage />,
+      },
+      {
+        path: '/edit/:id',
+        element: <EditViewPage />,
         path: "/my",
         element: <Mypage />,
       },

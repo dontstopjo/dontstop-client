@@ -61,6 +61,7 @@ const style = css`
     border-radius: 0;
     font-size: inherit;
   }
+
 `;
 
 export const GlobalStyle = () => {
