@@ -1,3 +1,4 @@
+
 export * from "./AddIcon";
 export * from "./HomeIcon";
 export * from "./MyPageIcon";
@@ -6,6 +7,8 @@ export * from "./LoginIcon";
 export * from "./HeartButton";
 export * from "./SaveButton";
 export * from "./Eye";
+export * from './ImgAdd';
+export * from './Arrow';
 export { default as icon } from "./icon.svg";
 export { default as FullLogo } from "./FullLogo.svg";
 export { default as link } from "./Link.svg";
@@ -18,3 +21,5 @@ export { default as searchIcon } from "./searchIcon.svg";
 export { default as SignoutIcon } from "./signout_icon.svg";
 export { default as updateIcon } from "./update_icon.svg";
 export { default as viewIcon } from "./view_icon.svg";
+export { default as Plus } from './Plus.svg';
+

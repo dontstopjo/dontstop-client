@@ -8,3 +8,8 @@ export * from "./DeleteModal";
 export * from "./Input";
 export * from "./Post";
 export * from "./TextArea";
+export * from './ImgSelector';
+export * from './SubStyleSelector';
+export * from './DropDown';
+export * from './Toggle';
+
