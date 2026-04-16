@@ -6,7 +6,25 @@ export const getMe = async (): Promise<UserInfoType> => {
   return data;
 };
 
-export const updateMe = async (formData: FormData): Promise<UserInfoType> => {
+export const updateMe = async ({
+  username,
+  description,
+  file,
+}: {
+  username: string;
+  description: string;
+  file?: File | null;
+}): Promise<UserInfoType> => {
+  const formData = new FormData();
+  formData.append(
+    'data',
+    new Blob([JSON.stringify({ username, description })], {
+      type: 'application/json',
+    }),
+  );
+  if (file) {
+    formData.append('files', file);
+  }
   const { data } = await instance.put('/me/update', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
   });

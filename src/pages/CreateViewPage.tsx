@@ -13,10 +13,16 @@ import { Input } from '../components/Input';
 import { mainStyles } from '../types/styleType';
 import { Button } from '../components/Button';
 import { Plus } from '../assets';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
+import { createPost } from '../apis/posts';
 
 const IMG_COUNT = 4;
 
 export const CreateViewPage = () => {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
   const [datas, setDatas] = useState<CreatePostSchemaType>({
     img: [],
     title: '',
@@ -27,17 +33,34 @@ export const CreateViewPage = () => {
     isPrivate: false,
   });
 
-  console.log(datas);
-
-  const [_files, setFiles] = useState<(File | null)[]>(
-    Array(IMG_COUNT).fill(null),
-  );
-  const [previews, setPreviews] = useState<(string | null)[]>(
-    Array(IMG_COUNT).fill(null),
-  );
-
-  const [_mainStyleSelected, setMainStyleSelected] = useState<string>('');
+  const [files, setFiles] = useState<(File | null)[]>(Array(IMG_COUNT).fill(null));
+  const [previews, setPreviews] = useState<(string | null)[]>(Array(IMG_COUNT).fill(null));
+  const [mainStyleSelected, setMainStyleSelected] = useState<string>('');
   const [subStyleSelected, setSubStyleSelected] = useState<string[]>([]);
+
+  const createMutation = useMutation({
+    mutationFn: () => {
+      const validFiles = files.filter((f): f is File => f !== null);
+      const links = (datas.link ?? []).map((item) => ({
+        category: item.keyword || 'TOP',
+        description: item.title,
+        link: item.link,
+      }));
+      return createPost({
+        title: datas.title,
+        content: datas.description,
+        mainStyle: datas.mainKeyword,
+        subStyles: datas.subkeyword ?? [],
+        links,
+        isPublic: !datas.isPrivate,
+        files: validFiles,
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
+      navigate('/');
+    },
+  });
 
   const handleImageAdd = (index: number, file: File, preview: string) => {
     setFiles((prev) => {
@@ -68,21 +91,13 @@ export const CreateViewPage = () => {
 
   const handleMainStyleChange = (value: string) => {
     setMainStyleSelected(value);
-    setDatas((prev) => ({
-      ...prev,
-      mainKeyword: value,
-    }));
+    setDatas((prev) => ({ ...prev, mainKeyword: value }));
   };
 
-  const handleSubStyleChange: React.Dispatch<React.SetStateAction<string[]>> = (
-    value,
-  ) => {
+  const handleSubStyleChange: React.Dispatch<React.SetStateAction<string[]>> = (value) => {
     const next = typeof value === 'function' ? value(subStyleSelected) : value;
     setSubStyleSelected(next);
-    setDatas((prev) => ({
-      ...prev,
-      subkeyword: next,
-    }));
+    setDatas((prev) => ({ ...prev, subkeyword: next }));
   };
 
   const handleInputChange = (name: string, e: string) => {
@@ -93,11 +108,7 @@ export const CreateViewPage = () => {
     setDatas((prev) => ({ ...prev, [name]: e }));
   };
 
-  const handleLinkChange = (
-    id: string,
-    field: 'title' | 'link',
-    value: string,
-  ) => {
+  const handleLinkChange = (id: string, field: 'title' | 'link', value: string) => {
     setDatas((prev) => ({
       ...prev,
       link: (prev.link ?? []).map((item) =>
@@ -128,13 +139,11 @@ export const CreateViewPage = () => {
       <Flex alignItems="center" gap={32} width="100%" justifyContent="end">
         <Toggle
           label="비공개"
-          onChange={(value) =>
-            setDatas((prev) => ({ ...prev, isPrivate: value }))
-          }
+          onChange={(value) => setDatas((prev) => ({ ...prev, isPrivate: value }))}
         />
         <Flex alignItems="center" gap={8}>
-          <Button>게시</Button>
-          <Button backgroundColor={colors.gray[50]} color={colors.gray[900]}>
+          <Button onClick={() => createMutation.mutate()}>게시</Button>
+          <Button backgroundColor={colors.gray[50]} color={colors.gray[900]} onClick={() => navigate(-1)}>
             이전
           </Button>
         </Flex>
@@ -163,9 +172,7 @@ export const CreateViewPage = () => {
             label="설명"
             placeholder="설명을 입력하세요"
             value={datas.description}
-            onChange={(e) =>
-              handleTextAreaChange('description', e.target.value)
-            }
+            onChange={(e) => handleTextAreaChange('description', e.target.value)}
           />
           <DropDown
             options={mainStyles}
@@ -187,21 +194,15 @@ export const CreateViewPage = () => {
                     width="327px"
                     placeholder="룩정보명을 입력하세요"
                     value={item.title}
-                    onChange={(e) =>
-                      handleLinkChange(item.id, 'title', e.target.value)
-                    }
+                    onChange={(e) => handleLinkChange(item.id, 'title', e.target.value)}
                   />
                   <Input
                     placeholder="링크를 입력하세요"
                     value={item.link}
-                    onChange={(e) =>
-                      handleLinkChange(item.id, 'link', e.target.value)
-                    }
+                    onChange={(e) => handleLinkChange(item.id, 'link', e.target.value)}
                   />
                   {(datas.link ?? []).length > 1 && (
-                    <DeleteButton onClick={() => handleLinkDelete(item.id)}>
-                      ✕
-                    </DeleteButton>
+                    <DeleteButton onClick={() => handleLinkDelete(item.id)}>✕</DeleteButton>
                   )}
                 </Flex>
               ))}
@@ -229,9 +230,7 @@ const DeleteButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  transition:
-    background-color 0.15s,
-    color 0.15s;
+  transition: background-color 0.15s, color 0.15s;
 
   &:hover {
     background-color: ${colors.gray[200]};

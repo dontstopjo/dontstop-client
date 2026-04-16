@@ -31,15 +31,7 @@ export const MypageUpdate = () => {
   }, [user]);
 
   const updateMutation = useMutation({
-    mutationFn: () => {
-      const formData = new FormData();
-      formData.append("username", name);
-      formData.append("description", desc);
-      if (imageFile) {
-        formData.append("file", imageFile);
-      }
-      return updateMe(formData);
-    },
+    mutationFn: () => updateMe({ username: name, description: desc, file: imageFile }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["me"] });
       navigate("/my");

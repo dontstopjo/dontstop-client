@@ -35,12 +35,26 @@ export const DetailviewPage = () => {
   const queryClient = useQueryClient();
 
   const [commentValue, setCommentValue] = useState<string>("");
+  const [isLiked, setIsLiked] = useState<boolean>(false);
+  const [isSaved, setIsSaved] = useState<boolean>(false);
+  const [likeCount, setLikeCount] = useState<number>(0);
+  const [saveCount, setSaveCount] = useState<number>(0);
 
   const { data: post, isLoading } = useQuery({
     queryKey: ["posts", postId],
     queryFn: () => getPostDetail(postId),
     enabled: !!postId,
   });
+
+  // 서버 데이터 로드되면 로컬 state 초기화
+  const [initialized, setInitialized] = useState(false);
+  if (post && !initialized) {
+    setIsLiked(post.liked);
+    setIsSaved(post.saved);
+    setLikeCount(post.likes);
+    setSaveCount(post.saves);
+    setInitialized(true);
+  }
 
   const { data: allPosts = [] } = useQuery({
     queryKey: ["posts"],
@@ -50,16 +64,30 @@ export const DetailviewPage = () => {
   const otherPosts = allPosts.filter((p) => p.postId !== postId);
 
   const likeMutation = useMutation({
-    mutationFn: () => (post?.liked ? unlikePost(postId) : likePost(postId)),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["posts", postId] });
+    mutationFn: (currentlyLiked: boolean) =>
+      currentlyLiked ? unlikePost(postId) : likePost(postId),
+    onMutate: (currentlyLiked) => {
+      // 낙관적 업데이트 - API 응답 전에 UI 먼저 변경
+      setIsLiked(!currentlyLiked);
+      setLikeCount((prev) => (currentlyLiked ? prev - 1 : prev + 1));
+    },
+    onError: (_, currentlyLiked) => {
+      // 실패 시 롤백
+      setIsLiked(currentlyLiked);
+      setLikeCount((prev) => (currentlyLiked ? prev + 1 : prev - 1));
     },
   });
 
   const saveMutation = useMutation({
-    mutationFn: () => (post?.saved ? unsavePost(postId) : savePost(postId)),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["posts", postId] });
+    mutationFn: (currentlySaved: boolean) =>
+      currentlySaved ? unsavePost(postId) : savePost(postId),
+    onMutate: (currentlySaved) => {
+      setIsSaved(!currentlySaved);
+      setSaveCount((prev) => (currentlySaved ? prev - 1 : prev + 1));
+    },
+    onError: (_, currentlySaved) => {
+      setIsSaved(currentlySaved);
+      setSaveCount((prev) => (currentlySaved ? prev + 1 : prev - 1));
     },
   });
 
@@ -120,18 +148,18 @@ export const DetailviewPage = () => {
               <Flex gap={8} alignItems="center">
                 <PostActions number={post.views} type="eye" />
                 <PostActions
-                  number={post.likes}
+                  number={likeCount}
                   type="heart"
                   postId={postId}
-                  isActive={post.liked}
-                  onToggle={() => likeMutation.mutate()}
+                  isActive={isLiked}
+                  onToggle={() => likeMutation.mutate(isLiked)}
                 />
                 <PostActions
-                  number={post.saves}
+                  number={saveCount}
                   type="save"
                   postId={postId}
-                  isActive={post.saved}
-                  onToggle={() => saveMutation.mutate()}
+                  isActive={isSaved}
+                  onToggle={() => saveMutation.mutate(isSaved)}
                 />
               </Flex>
             </Flex>

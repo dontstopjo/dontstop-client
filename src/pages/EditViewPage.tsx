@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   DropDown,
   ImgSelector,
@@ -13,31 +13,99 @@ import { Input } from '../components/Input';
 import { mainStyles } from '../types/styleType';
 import { Button } from '../components/Button';
 import { Plus } from '../assets';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useNavigate, useParams } from 'react-router-dom';
+import { getPostDetail, updatePost } from '../apis/posts';
 
 const IMG_COUNT = 4;
 
 export const EditViewPage = () => {
-  const [datas, setDatas] = useState<CreatePostSchemaType>({
-    img: [],
-    title: '타이틀',
-    description: '내용',
-    mainKeyword: '캐쥬얼',
-    subkeyword: ["스트릿", "러블리"],
-    link: [{ id: crypto.randomUUID(), title: '', link: '', keyword: '' }],
-    isPrivate: true,
+  const { id } = useParams<{ id: string }>();
+  const postId = Number(id);
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  const { data: post } = useQuery({
+    queryKey: ['posts', postId],
+    queryFn: () => getPostDetail(postId),
+    enabled: !!postId,
   });
 
-  console.log(datas);
+  const [datas, setDatas] = useState<CreatePostSchemaType>({
+    img: [],
+    title: '',
+    description: '',
+    mainKeyword: '',
+    subkeyword: [],
+    link: [{ id: crypto.randomUUID(), title: '', link: '', keyword: '' }],
+    isPrivate: false,
+  });
 
-  const [_files, setFiles] = useState<(File | null)[]>(
-    Array(IMG_COUNT).fill(null),
-  );
-  const [previews, setPreviews] = useState<(string | null)[]>(
-    Array(IMG_COUNT).fill(null),
-  );
-
-  const [_mainStyleSelected, setMainStyleSelected] = useState<string>('');
+  const [files, setFiles] = useState<(File | null)[]>(Array(IMG_COUNT).fill(null));
+  const [previews, setPreviews] = useState<(string | null)[]>(Array(IMG_COUNT).fill(null));
   const [subStyleSelected, setSubStyleSelected] = useState<string[]>([]);
+
+  // 기존 게시글 데이터 세팅
+  useEffect(() => {
+    if (post) {
+      setDatas({
+        img: post.imageURLs,
+        title: post.title,
+        description: post.content,
+        mainKeyword: post.mainStyle,
+        subkeyword: post.subStyles,
+        link: post.links.length > 0
+          ? post.links.map((l) => ({
+              id: crypto.randomUUID(),
+              title: l.description,
+              link: l.link,
+              keyword: l.category,
+            }))
+          : [{ id: crypto.randomUUID(), title: '', link: '', keyword: '' }],
+        isPrivate: false,
+      });
+      setSubStyleSelected(post.subStyles);
+      setPreviews(
+        post.imageURLs
+          .slice(0, IMG_COUNT)
+          .concat(Array(IMG_COUNT).fill(null))
+          .slice(0, IMG_COUNT),
+      );
+    }
+  }, [post]);
+
+  const updateMutation = useMutation({
+    mutationFn: () => {
+      const validFiles = files.filter((f): f is File => f !== null);
+      const existingImageURLs = (post?.imageURLs ?? []).map((url, i) => ({
+        url,
+        order: i,
+      }));
+      const newFileOrders = validFiles.map((_, i) => existingImageURLs.length + i);
+      const links = (datas.link ?? []).map((item) => ({
+        category: item.keyword || 'TOP',
+        description: item.title,
+        link: item.link,
+      }));
+      return updatePost({
+        postId,
+        title: datas.title,
+        content: datas.description,
+        mainStyle: datas.mainKeyword,
+        subStyles: datas.subkeyword ?? [],
+        links,
+        isPublic: !datas.isPrivate,
+        files: validFiles,
+        imageURLs: existingImageURLs,
+        newFileOrders,
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
+      queryClient.invalidateQueries({ queryKey: ['posts', postId] });
+      navigate(`/detail/${postId}`);
+    },
+  });
 
   const handleImageAdd = (index: number, file: File, preview: string) => {
     setFiles((prev) => {
@@ -50,39 +118,21 @@ export const EditViewPage = () => {
       next[index] = preview;
       return next;
     });
-    setDatas((prev) => {
-      const next = [...(prev.img ?? [])] as File[];
-      next[index] = file;
-      return { ...prev, img: next };
-    });
   };
 
   const handleImageDelete = (index: number) => {
     setFiles((prev) => prev.filter((_, i) => i !== index).concat([null]));
     setPreviews((prev) => prev.filter((_, i) => i !== index).concat([null]));
-    setDatas((prev) => {
-      const next = (prev.img ?? []).filter((_, i) => i !== index);
-      return { ...prev, img: next };
-    });
   };
 
   const handleMainStyleChange = (value: string) => {
-    setMainStyleSelected(value);
-    setDatas((prev) => ({
-      ...prev,
-      mainKeyword: value,
-    }));
+    setDatas((prev) => ({ ...prev, mainKeyword: value }));
   };
 
-  const handleSubStyleChange: React.Dispatch<React.SetStateAction<string[]>> = (
-    value,
-  ) => {
+  const handleSubStyleChange: React.Dispatch<React.SetStateAction<string[]>> = (value) => {
     const next = typeof value === 'function' ? value(subStyleSelected) : value;
     setSubStyleSelected(next);
-    setDatas((prev) => ({
-      ...prev,
-      subkeyword: next,
-    }));
+    setDatas((prev) => ({ ...prev, subkeyword: next }));
   };
 
   const handleInputChange = (name: string, e: string) => {
@@ -93,11 +143,7 @@ export const EditViewPage = () => {
     setDatas((prev) => ({ ...prev, [name]: e }));
   };
 
-  const handleLinkChange = (
-    id: string,
-    field: 'title' | 'link',
-    value: string,
-  ) => {
+  const handleLinkChange = (id: string, field: 'title' | 'link', value: string) => {
     setDatas((prev) => ({
       ...prev,
       link: (prev.link ?? []).map((item) =>
@@ -128,13 +174,11 @@ export const EditViewPage = () => {
       <Flex alignItems="center" gap={32} width="100%" justifyContent="end">
         <Toggle
           label="비공개"
-          onChange={(value) =>
-            setDatas((prev) => ({ ...prev, isPrivate: value }))
-          }
+          onChange={(value) => setDatas((prev) => ({ ...prev, isPrivate: value }))}
         />
         <Flex alignItems="center" gap={8}>
-          <Button>게시</Button>
-          <Button backgroundColor={colors.gray[50]} color={colors.gray[900]}>
+          <Button onClick={() => updateMutation.mutate()}>수정</Button>
+          <Button backgroundColor={colors.gray[50]} color={colors.gray[900]} onClick={() => navigate(-1)}>
             이전
           </Button>
         </Flex>
@@ -163,9 +207,7 @@ export const EditViewPage = () => {
             label="설명"
             placeholder="설명을 입력하세요"
             value={datas.description}
-            onChange={(e) =>
-              handleTextAreaChange('description', e.target.value)
-            }
+            onChange={(e) => handleTextAreaChange('description', e.target.value)}
           />
           <DropDown
             options={mainStyles}
@@ -187,21 +229,15 @@ export const EditViewPage = () => {
                     width="327px"
                     placeholder="룩정보명을 입력하세요"
                     value={item.title}
-                    onChange={(e) =>
-                      handleLinkChange(item.id, 'title', e.target.value)
-                    }
+                    onChange={(e) => handleLinkChange(item.id, 'title', e.target.value)}
                   />
                   <Input
                     placeholder="링크를 입력하세요"
                     value={item.link}
-                    onChange={(e) =>
-                      handleLinkChange(item.id, 'link', e.target.value)
-                    }
+                    onChange={(e) => handleLinkChange(item.id, 'link', e.target.value)}
                   />
                   {(datas.link ?? []).length > 1 && (
-                    <DeleteButton onClick={() => handleLinkDelete(item.id)}>
-                      ✕
-                    </DeleteButton>
+                    <DeleteButton onClick={() => handleLinkDelete(item.id)}>✕</DeleteButton>
                   )}
                 </Flex>
               ))}
@@ -229,9 +265,7 @@ const DeleteButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  transition:
-    background-color 0.15s,
-    color 0.15s;
+  transition: background-color 0.15s, color 0.15s;
 
   &:hover {
     background-color: ${colors.gray[200]};
