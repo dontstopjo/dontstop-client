@@ -105,6 +105,7 @@ export const DetailviewPage = () => {
 
   const handleCommentSubmit = () => {
     if (!commentValue.trim()) return;
+    setCommentValue("");
     commentMutation.mutate();
   };
 
