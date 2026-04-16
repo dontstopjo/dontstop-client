@@ -46,13 +46,10 @@ export const Settings = () => {
         </Text>
 
         <Flex gap={40} alignItems="center">
-          <Profile>
-            <img
-              src={user?.profileImageURL || profileIcon}
-              alt="프로필"
-              style={{ width: "80px", height: "80px", borderRadius: "50%", objectFit: "cover" }}
-            />
-          </Profile>
+          <ProfileImg
+            src={user?.profileImageURL || profileIcon}
+            alt="프로필"
+          />
 
           <Flex isColumn={true} gap={12}>
             <Text fontSize={24} fontWeight={600}>
@@ -94,15 +91,12 @@ export const Settings = () => {
   );
 };
 
-const Profile = styled.div`
+const ProfileImg = styled.img`
   width: 110px;
   height: 110px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  border-radius: 50%;
+  object-fit: cover;
   background-color: ${colors.gray[100]};
-  border-radius: 100%;
-  position: relative;
 `;
 const SettingButton = styled.button`
   width: 792px;
