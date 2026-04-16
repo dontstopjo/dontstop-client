@@ -1,7 +1,6 @@
 import { useState } from "react";
 import styled from "@emotion/styled";
 import { colors, Flex, Text } from "../styles/theme";
-import { Post } from "../components";
 import { profileIcon, updateIcon } from "../assets";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
@@ -11,7 +10,7 @@ type LookbookTab = "saved" | "public" | "private";
 
 const tabs: { key: LookbookTab; label: string }[] = [
   { key: "saved", label: "저장한 룩북" },
-  { key: "public", label: "나의 공개 룩북" },
+  { key: "public", label: "MY 공개 룩북" },
   { key: "private", label: "나의 비공개 룩북" },
 ];
 
@@ -28,7 +27,12 @@ export const Mypage = () => {
 
   if (isLoading) {
     return (
-      <Flex alignItems="center" justifyContent="center" width="100%" paddingTop="100px">
+      <Flex
+        alignItems="center"
+        justifyContent="center"
+        width="100%"
+        paddingTop="100px"
+      >
         <Text fontSize={16} fontWeight={400} color={colors.gray[400]}>
           불러오는 중...
         </Text>
@@ -43,7 +47,12 @@ export const Mypage = () => {
           <img
             src={user?.profileImageURL || profileIcon}
             alt="프로필"
-            style={{ width: "80px", height: "80px", borderRadius: "50%", objectFit: "cover" }}
+            style={{
+              width: "80px",
+              height: "80px",
+              borderRadius: "50%",
+              objectFit: "cover",
+            }}
           />
           <UpdateButton onClick={() => navigate("/update-my")}>
             <img src={updateIcon} alt="프로필 수정" />
