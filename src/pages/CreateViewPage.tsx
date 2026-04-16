@@ -35,7 +35,7 @@ export const CreateViewPage = () => {
 
   const [files, setFiles] = useState<(File | null)[]>(Array(IMG_COUNT).fill(null));
   const [previews, setPreviews] = useState<(string | null)[]>(Array(IMG_COUNT).fill(null));
-  const [mainStyleSelected, setMainStyleSelected] = useState<string>('');
+  const [_mainStyleSelected, setMainStyleSelected] = useState<string>('');
   const [subStyleSelected, setSubStyleSelected] = useState<string[]>([]);
 
   const createMutation = useMutation({

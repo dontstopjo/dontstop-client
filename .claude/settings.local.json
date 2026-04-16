@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(npx tsc:*)",
-      "WebFetch(domain:ootdrop-stg.ajswl.website)"
+      "WebFetch(domain:ootdrop-stg.ajswl.website)",
+      "Bash(yarn run *)"
     ]
   }
 }
