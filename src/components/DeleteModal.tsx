@@ -1,7 +1,7 @@
-import styled from '@emotion/styled';
-import { colors, Flex, Text } from '../styles/theme';
-import Button from './Button';
-import { useRef } from 'react';
+import styled from "@emotion/styled";
+import { colors, Flex, Text } from "../styles/theme";
+import { useRef } from "react";
+import { Button } from "../components";
 
 interface ModalType {
   onClick?: () => void;

@@ -1,6 +1,5 @@
-import styled from '@emotion/styled';
-import view_icon from '../assets/view_icon.svg';
-import heart_icon from '../assets/heart_icon.svg';
+import styled from "@emotion/styled";
+import { viewIcon, heartIcon } from "../assets";
 
 interface PostType {
   authorName: string;
@@ -18,7 +17,7 @@ const formatCount = (n: number): string => {
   return n.toLocaleString();
 };
 
-const Post = ({
+export const Post = ({
   authorName,
   keyword,
   title,
@@ -42,10 +41,10 @@ const Post = ({
           <Title>{title}</Title>
           <Stats>
             <StatItem>
-              <img src={view_icon} /> {formatCount(views)}
+              <img src={viewIcon} /> {formatCount(views)}
             </StatItem>
             <StatItem>
-              <img src={heart_icon} /> {formatCount(likes)}
+              <img src={heartIcon} /> {formatCount(likes)}
             </StatItem>
           </Stats>
         </BottomRight>
@@ -133,5 +132,3 @@ const StatItem = styled.span`
   color: white;
   font-size: 14px;
 `;
-
-export default Post;

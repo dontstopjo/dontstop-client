@@ -1,23 +1,27 @@
-import { createBrowserRouter } from 'react-router-dom';
-import { RootLayout } from './layouts';
+import { createBrowserRouter } from "react-router-dom";
+import { RootLayout } from "./layouts";
 import {
-  CreateViewPage,
   DetailviewPage,
-  EditViewPage,
   OverviewPage,
-} from './pages';
+  Mypage,
+  MypageUpdate,
+  Settings,
+  OAuthCallbackPage,
+   CreateViewPage,
+  EditViewPage,
+} from "./pages";
 
 export const router = createBrowserRouter([
   {
-    path: '/',
+    path: "/",
     element: <RootLayout />,
     children: [
       {
-        path: '',
+        path: "",
         element: <OverviewPage />,
       },
       {
-        path: '/detail/:id',
+        path: "/detail/:id",
         element: <DetailviewPage />,
       },
       {
@@ -27,7 +31,21 @@ export const router = createBrowserRouter([
       {
         path: '/edit/:id',
         element: <EditViewPage />,
+        path: "/my",
+        element: <Mypage />,
+      },
+      {
+        path: "/update-my",
+        element: <MypageUpdate />,
+      },
+      {
+        path: "/setting",
+        element: <Settings />,
       },
     ],
+  },
+  {
+    path: "/oauth2/success",
+    element: <OAuthCallbackPage />,
   },
 ]);

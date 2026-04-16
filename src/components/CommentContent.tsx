@@ -1,21 +1,21 @@
 import styled from '@emotion/styled';
 import { colors, Flex, Text } from '../styles/theme';
-import type { CommentSchemaType } from '../types';
+import type { CommentType } from '../types';
 
 export const CommentContent = ({
-  authorName,
-  comment,
-  img,
-}: CommentSchemaType) => {
+  username,
+  text,
+  profileImageURL,
+}: CommentType) => {
   return (
     <Flex gap={12}>
-      <ProfileContent src={img} alt={authorName}></ProfileContent>
+      <ProfileContent src={profileImageURL} alt={username}></ProfileContent>
       <Flex isColumn gap={12}>
         <Text fontSize={16} fontWeight={600} color={colors.gray[1000]}>
-          {authorName}
+          {username}
         </Text>
         <Text fontSize={16} fontWeight={500} color={colors.gray[900]}>
-          {comment}
+          {text}
         </Text>
       </Flex>
     </Flex>

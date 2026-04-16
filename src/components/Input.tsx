@@ -4,8 +4,9 @@ import { colors, Flex, Text } from '../styles/theme';
 
 interface InputType {
   placeholder: string;
-  type: 'text' | 'search';
+  type: "text" | "search";
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   className?: string;
   value: string;
   label?: string;
@@ -63,5 +64,3 @@ const StyledInput = styled.input`
   font-size: 1em;
   color: ${colors.gray[900]};
 `;
-
-export default Input;

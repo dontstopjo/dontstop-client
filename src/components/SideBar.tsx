@@ -1,4 +1,5 @@
-import styled from '@emotion/styled';
+import { useState, useEffect } from "react";
+import styled from "@emotion/styled";
 import {
   AddIcon,
   HomeIcon,
@@ -6,8 +7,8 @@ import {
   LoginIcon,
   MyPageIcon,
   SettingIcon,
-} from '../assets';
-import { useLocation, useNavigate } from 'react-router-dom';
+} from "../assets";
+import { useLocation, useNavigate } from "react-router-dom";
 
 interface INavType {
   icon: React.ElementType;
@@ -19,8 +20,8 @@ interface INavType {
 const navData = [
   {
     icon: HomeIcon,
-    content: '홈',
-    path: '/',
+    content: "홈",
+    path: "/",
   },
   {
     icon: AddIcon,
@@ -29,8 +30,8 @@ const navData = [
   },
   {
     icon: MyPageIcon,
-    content: '마이페이지',
-    path: '/mypage',
+    content: "마이페이지",
+    path: "/my",
   },
 ];
 
@@ -49,7 +50,22 @@ export const SideBar = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
 
-  const accessToken = 'dsddsds';
+  const [accessToken, setAccessToken] = useState<string | null>(
+    localStorage.getItem("accessToken")
+  );
+
+  useEffect(() => {
+    const handleStorage = () => {
+      setAccessToken(localStorage.getItem("accessToken"));
+    };
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
+  }, []);
+
+  const handleLoginClick = () => {
+    window.location.href = `${import.meta.env.VITE_API_BASE_URL.replace(/\/+$/, "")}/oauth2/authorization/kakao`;
+  };
+
   return (
     <SideBarWrapper>
       <LogoWrapper>
@@ -57,6 +73,7 @@ export const SideBar = () => {
         <NavWrapper>
           {navData.map((data) => (
             <NavContent
+              key={data.path}
               onClick={() => navigate(data.path)}
               isNav={pathname === data.path}
               icon={data.icon}
@@ -66,9 +83,14 @@ export const SideBar = () => {
         </NavWrapper>
       </LogoWrapper>
       {accessToken ? (
-        <NavContent content="설정" icon={SettingIcon} isNav />
+        <NavContent
+          onClick={() => navigate("/setting")}
+          content="설정"
+          icon={SettingIcon}
+          isNav={pathname === "/setting"}
+        />
       ) : (
-        <NavContent content="로그인" icon={LoginIcon} isNav />
+        <NavContent content="로그인" icon={LoginIcon} onClick={handleLoginClick} />
       )}
     </SideBarWrapper>
   );
@@ -122,8 +144,8 @@ const NavImgWrapper = styled.div`
   }
 `;
 
-const NavName = styled.div<Pick<INavType, 'isNav'>>`
+const NavName = styled.div<Pick<INavType, "isNav">>`
   font-size: 12px;
   font-weight: 600;
-  color: ${({ isNav }) => (isNav ? '#262626' : '#ADADAD')};
+  color: ${({ isNav }) => (isNav ? "#262626" : "#ADADAD")};
 `;
