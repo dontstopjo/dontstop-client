@@ -21,8 +21,8 @@ export interface PostDetailType {
   likes: number;
   views: number;
   saves: number;
-  isSaved: boolean;
-  isLiked: boolean;
+  saved: boolean;
+  liked: boolean;
   mainStyle: string;
   subStyles: string[];
   links: FashionLinkType[];
@@ -30,9 +30,10 @@ export interface PostDetailType {
 }
 
 export interface FashionLinkType {
-  title: string;
-  linkUrl: string;
-  img?: string;
+  link: string;
+  description: string;
+  category: string;
+  imageURL?: string;
 }
 
 export interface CommentType {

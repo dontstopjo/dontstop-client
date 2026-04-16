@@ -4,15 +4,15 @@ import { link } from '../assets';
 import type { FashionLinkType } from '../types';
 
 export const InformationContent = ({
-  title,
-  linkUrl,
-  img,
+  description,
+  link: linkUrl,
+  imageURL,
 }: FashionLinkType) => {
   return (
     <Flex isColumn gap={8}>
-      {img ? <ImgWrapper src={img} /> : <NotImgWrapper></NotImgWrapper>}
+      {imageURL ? <ImgWrapper src={imageURL} /> : <NotImgWrapper />}
       <Text fontSize={16} fontWeight={700} color={colors.gray[900]}>
-        {title}
+        {description}
       </Text>
       <Flex gap={6} alignItems="center">
         <img src={link} alt="link-img" />
@@ -28,6 +28,10 @@ const Link = styled.a`
   font-size: 12px;
   font-weight: 500;
   color: ${colors.gray[900]};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 180px;
 `;
 
 const ImgWrapper = styled.img`
@@ -36,6 +40,7 @@ const ImgWrapper = styled.img`
   background-color: ${colors.gray[100]};
   border-radius: 20px;
   border: 1px solid ${colors.gray[50]};
+  object-fit: cover;
 `;
 
 const NotImgWrapper = styled.div`

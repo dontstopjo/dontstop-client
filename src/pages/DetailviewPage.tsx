@@ -21,6 +21,13 @@ import {
   createComment,
 } from "../apis/posts";
 
+const toFullImageUrl = (url: string) => {
+  if (!url) return "";
+  if (url.startsWith("http")) return url;
+  const base = (import.meta.env.VITE_API_BASE_URL ?? "").replace(/\/+$/, "");
+  return `${base}/${url}`;
+};
+
 export const DetailviewPage = () => {
   const { id } = useParams<{ id: string }>();
   const postId = Number(id);
@@ -43,16 +50,14 @@ export const DetailviewPage = () => {
   const otherPosts = allPosts.filter((p) => p.postId !== postId);
 
   const likeMutation = useMutation({
-    mutationFn: () =>
-      post?.isLiked ? unlikePost(postId) : likePost(postId),
+    mutationFn: () => (post?.liked ? unlikePost(postId) : likePost(postId)),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["posts", postId] });
     },
   });
 
   const saveMutation = useMutation({
-    mutationFn: () =>
-      post?.isSaved ? unsavePost(postId) : savePost(postId),
+    mutationFn: () => (post?.saved ? unsavePost(postId) : savePost(postId)),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["posts", postId] });
     },
@@ -81,7 +86,12 @@ export const DetailviewPage = () => {
 
   if (isLoading || !post) {
     return (
-      <Flex alignItems="center" justifyContent="center" width="100%" paddingTop="100px">
+      <Flex
+        alignItems="center"
+        justifyContent="center"
+        width="100%"
+        paddingTop="100px"
+      >
         <Text fontSize={16} fontWeight={400} color={colors.gray[400]}>
           불러오는 중...
         </Text>
@@ -89,15 +99,20 @@ export const DetailviewPage = () => {
     );
   }
 
+  const mainImageUrl = toFullImageUrl(post.imageURLs[0]);
+
   return (
     <Flex gap={70}>
       <ContentWrapper>
-        <ImgWrapper src={post.imageURLs[0]} />
+        <ImgWrapper src={mainImageUrl} />
         <Flex isColumn gap={24}>
           <Flex isColumn gap={12} width="100%">
             <Flex justifyContent="space-between" width="100%">
               <Flex alignItems="center" gap={12}>
-                <ProfileContent src={post.profileImageURL} alt={post.username} />
+                <ProfileContent
+                  src={post.profileImageURL}
+                  alt={post.username}
+                />
                 <Text fontSize={16} fontWeight={600} color={colors.gray[1000]}>
                   {post.username}
                 </Text>
@@ -108,14 +123,14 @@ export const DetailviewPage = () => {
                   number={post.likes}
                   type="heart"
                   postId={postId}
-                  isActive={post.isLiked}
+                  isActive={post.liked}
                   onToggle={() => likeMutation.mutate()}
                 />
                 <PostActions
                   number={post.saves}
                   type="save"
                   postId={postId}
-                  isActive={post.isSaved}
+                  isActive={post.saved}
                   onToggle={() => saveMutation.mutate()}
                 />
               </Flex>
@@ -135,7 +150,12 @@ export const DetailviewPage = () => {
           </Flex>
           <Flex gap={12}>
             {post.subStyles.map((style, i) => (
-              <Text key={i} fontSize={14} fontWeight={600} color={colors.gray[800]}>
+              <Text
+                key={i}
+                fontSize={14}
+                fontWeight={600}
+                color={colors.gray[800]}
+              >
                 #{style}
               </Text>
             ))}
@@ -165,16 +185,19 @@ export const DetailviewPage = () => {
             ))}
           </Flex>
         </CommentWrapper>
-        <Flex gapX={44} gapY={28} width="100%" flexWrap="wrap">
-          {post.links.map((link, i) => (
-            <InformationContent
-              key={i}
-              title={link.title}
-              img={link.img}
-              linkUrl={link.linkUrl}
-            />
-          ))}
-        </Flex>
+        {post.links.length > 0 && (
+          <Flex gapX={44} gapY={28} width="100%" flexWrap="wrap">
+            {post.links.map((link, i) => (
+              <InformationContent
+                key={i}
+                description={link.description}
+                link={link.link}
+                category={link.category}
+                imageURL={link.imageURL}
+              />
+            ))}
+          </Flex>
+        )}
       </ContentWrapper>
       <Flex>
         <Flex width="fit-content" flexWrap="wrap" gap={24} height="fit-content">
