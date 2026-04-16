@@ -16,7 +16,8 @@ export const OverviewPage = () => {
   });
 
   const handleLoginClick = () => {
-    window.location.href = `${import.meta.env.VITE_API_BASE_URL.replace(/\/+$/, "")}/oauth2/authorization/kakao`;
+    const baseUrl = (import.meta.env.VITE_API_BASE_URL ?? "").replace(/\/+$/, "");
+    window.location.href = `${baseUrl}/oauth2/authorization/kakao`;
   };
 
   if (isLoading) {
