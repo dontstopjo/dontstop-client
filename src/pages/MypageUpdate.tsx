@@ -102,7 +102,7 @@ export const MypageUpdate = () => {
               placeholder="이름을 입력해주세요."
               type="text"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
             />
           </Flex>
 

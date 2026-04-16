@@ -4,7 +4,7 @@ import { colors, Flex, Text } from '../styles/theme';
 
 interface InputType {
   placeholder: string;
-  type: "text" | "search";
+  type?: "text" | "search";
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   className?: string;
@@ -13,7 +13,7 @@ interface InputType {
   width?: string;
 }
 
-const Input = ({
+export const Input = ({
   label,
   placeholder,
   type,

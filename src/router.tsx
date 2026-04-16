@@ -32,6 +32,8 @@ export const router = createBrowserRouter([
       {
         path: '/edit/:id',
         element: <EditViewPage />,
+      },
+      {
         path: "/my",
         element: <Mypage />,
       },

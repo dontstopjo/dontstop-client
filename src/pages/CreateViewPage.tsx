@@ -9,9 +9,9 @@ import {
 } from '../components';
 import type { CreatePostSchemaType } from '../types';
 import { colors, Flex, Text } from '../styles/theme';
-import Input from '../components/Input';
+import { Input } from '../components/Input';
 import { mainStyles } from '../types/styleType';
-import Button from '../components/Button';
+import { Button } from '../components/Button';
 import { Plus } from '../assets';
 
 const IMG_COUNT = 4;
@@ -29,14 +29,14 @@ export const CreateViewPage = () => {
 
   console.log(datas);
 
-  const [files, setFiles] = useState<(File | null)[]>(
+  const [_files, setFiles] = useState<(File | null)[]>(
     Array(IMG_COUNT).fill(null),
   );
   const [previews, setPreviews] = useState<(string | null)[]>(
     Array(IMG_COUNT).fill(null),
   );
 
-  const [mainStyleSelected, setMainStyleSelected] = useState<string>('');
+  const [_mainStyleSelected, setMainStyleSelected] = useState<string>('');
   const [subStyleSelected, setSubStyleSelected] = useState<string[]>([]);
 
   const handleImageAdd = (index: number, file: File, preview: string) => {
