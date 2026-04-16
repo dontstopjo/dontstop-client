@@ -92,7 +92,7 @@ export const DetailviewPage = () => {
   });
 
   const commentMutation = useMutation({
-    mutationFn: () => createComment(postId, commentValue),
+    mutationFn: (content: string) => createComment(postId, content),
     onSuccess: () => {
       setCommentValue("");
       queryClient.invalidateQueries({ queryKey: ["posts", postId] });
@@ -104,9 +104,9 @@ export const DetailviewPage = () => {
   };
 
   const handleCommentSubmit = () => {
-    if (!commentValue.trim()) return;
-    setCommentValue("");
-    commentMutation.mutate();
+    const content = commentValue.trim();
+    if (!content) return;
+    commentMutation.mutate(content);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {

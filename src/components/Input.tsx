@@ -18,8 +18,10 @@ export const Input = ({
   placeholder,
   type,
   onChange,
+  onKeyDown,
   className,
   width,
+  value,
 }: InputType) => {
   return (
     <Flex isColumn gap={8} width={width ? width : '100%'}>
@@ -28,7 +30,12 @@ export const Input = ({
       </Text>
       <InputContainer width={width} className={className}>
         {type == 'search' && <SearchIcon src={search_icon} alt="검색" />}
-        <StyledInput placeholder={placeholder} onChange={onChange} />
+        <StyledInput
+          placeholder={placeholder}
+          onChange={onChange}
+          onKeyDown={onKeyDown}
+          value={value}
+        />
       </InputContainer>
     </Flex>
   );
