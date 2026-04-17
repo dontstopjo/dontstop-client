@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { colors, Flex, Text } from "../styles/theme";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
@@ -19,7 +19,9 @@ import {
   savePost,
   unsavePost,
   createComment,
+  deletePost,
 } from "../apis/posts";
+import { getMe } from "../apis/me";
 import { apiToSubStyle } from "../types/styleType";
 
 const toFullImageUrl = (url: string) => {
@@ -40,6 +42,16 @@ export const DetailviewPage = () => {
   const [isSaved, setIsSaved] = useState<boolean>(false);
   const [likeCount, setLikeCount] = useState<number>(0);
   const [saveCount, setSaveCount] = useState<number>(0);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  const isLoggedIn = !!localStorage.getItem("accessToken");
+
+  const { data: currentUser } = useQuery({
+    queryKey: ["me"],
+    queryFn: getMe,
+    enabled: isLoggedIn,
+  });
 
   const { data: post, isLoading } = useQuery({
     queryKey: ["posts", postId],
@@ -91,6 +103,32 @@ export const DetailviewPage = () => {
       setSaveCount((prev) => (currentlySaved ? prev + 1 : prev - 1));
     },
   });
+
+  // 메뉴 외부 클릭 시 닫기
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const deleteMutation = useMutation({
+    mutationFn: () => deletePost(postId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      navigate("/");
+    },
+  });
+
+  const handleDelete = () => {
+    if (window.confirm("게시글을 삭제할까요?")) {
+      deleteMutation.mutate();
+    }
+    setMenuOpen(false);
+  };
 
   const commentMutation = useMutation({
     mutationFn: (content: string) => createComment(postId, content),
@@ -173,6 +211,25 @@ export const DetailviewPage = () => {
               <Text fontSize={20} fontWeight={600}>
                 {post.title}
               </Text>
+              {currentUser?.username === post.username && (
+                <MenuWrapper ref={menuRef}>
+                  <EllipsisButton onClick={() => setMenuOpen((v) => !v)}>
+                    <span />
+                    <span />
+                    <span />
+                  </EllipsisButton>
+                  {menuOpen && (
+                    <DropdownMenu>
+                      <DropdownItem onClick={() => { navigate(`/edit/${postId}`); setMenuOpen(false); }}>
+                        수정하기
+                      </DropdownItem>
+                      <DropdownItem danger onClick={handleDelete}>
+                        삭제하기
+                      </DropdownItem>
+                    </DropdownMenu>
+                  )}
+                </MenuWrapper>
+              )}
             </Flex>
             <Text fontSize={16} fontWeight={400} color={colors.gray[400]}>
               {post.content}
@@ -283,6 +340,63 @@ const ImgWrapper = styled.img`
   border-radius: 20px;
   background-color: ${colors.gray[100]};
   object-fit: cover;
+`;
+
+const MenuWrapper = styled.div`
+  position: relative;
+`;
+
+const EllipsisButton = styled.button`
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background: none;
+  cursor: pointer;
+  padding: 0;
+
+  &:hover {
+    background-color: ${colors.gray[100]};
+  }
+
+  span {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background-color: ${colors.gray[600]};
+    display: block;
+  }
+`;
+
+const DropdownMenu = styled.div`
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  background: white;
+  border-radius: 14px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+  min-width: 140px;
+  z-index: 100;
+`;
+
+const DropdownItem = styled.button<{ danger?: boolean }>`
+  width: 100%;
+  padding: 14px 18px;
+  text-align: left;
+  font-size: 15px;
+  font-weight: 500;
+  color: ${({ danger }) => (danger ? "#FF3B30" : colors.gray[800])};
+  background: none;
+  cursor: pointer;
+  display: block;
+
+  &:hover {
+    background-color: ${colors.gray[50]};
+  }
 `;
 
 const ContentWrapper = styled.div`

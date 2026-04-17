@@ -32,12 +32,33 @@ const toHttps = (obj: unknown): unknown => {
   return obj;
 };
 
+// 401 이벤트 중복 발생 방지 플래그
+let isHandlingUnauth = false;
+
 instance.interceptors.response.use(
   (response) => {
     response.data = toHttps(response.data);
     return response;
   },
   (error) => {
+    const status = error.response?.status;
+    const url = error.config?.url ?? '';
+
+    // 로그아웃 요청 자체의 401은 무시 (이미 토큰 만료 상태)
+    const isLogoutRequest = url.includes('/oauth2/logout');
+
+    if (status === 401 && !isHandlingUnauth && !isLogoutRequest) {
+      isHandlingUnauth = true;
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      // 전역 로그인 모달 트리거
+      window.dispatchEvent(new CustomEvent('auth:unauthorized'));
+      // 3초 후 플래그 리셋 (연속 요청 방지)
+      setTimeout(() => {
+        isHandlingUnauth = false;
+      }, 3000);
+    }
+
     return Promise.reject(error);
   },
 );

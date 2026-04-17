@@ -12,4 +12,5 @@ export * from './ImgSelector';
 export * from './SubStyleSelector';
 export * from './DropDown';
 export * from './Toggle';
+export * from './LoginModal';
 

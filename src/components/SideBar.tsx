@@ -7,8 +7,10 @@ import {
   LoginIcon,
   MyPageIcon,
   SettingIcon,
+  LogoutIcon,
 } from "../assets";
 import { useLocation, useNavigate } from "react-router-dom";
+import { logout } from "../apis/auth";
 
 interface INavType {
   icon: React.ElementType;
@@ -59,12 +61,32 @@ export const SideBar = () => {
       setAccessToken(localStorage.getItem("accessToken"));
     };
     window.addEventListener("storage", handleStorage);
-    return () => window.removeEventListener("storage", handleStorage);
+    // auth:unauthorized 이벤트 발생 시 토큰 상태 동기화
+    window.addEventListener("auth:unauthorized", handleStorage);
+    return () => {
+      window.removeEventListener("storage", handleStorage);
+      window.removeEventListener("auth:unauthorized", handleStorage);
+    };
   }, []);
 
   const handleLoginClick = () => {
     const baseUrl = (import.meta.env.VITE_API_BASE_URL ?? "").replace(/\/+$/, "");
     window.location.href = `${baseUrl}/oauth2/authorization/kakao`;
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch {
+      // 토큰 만료 등으로 실패해도 로컬 정리
+    } finally {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      setAccessToken(null);
+      navigate("/");
+      // 다른 탭에도 알림
+      window.dispatchEvent(new StorageEvent("storage"));
+    }
   };
 
   return (
@@ -83,16 +105,25 @@ export const SideBar = () => {
           ))}
         </NavWrapper>
       </LogoWrapper>
-      {accessToken ? (
-        <NavContent
-          onClick={() => navigate("/setting")}
-          content="설정"
-          icon={SettingIcon}
-          isNav={pathname === "/setting"}
-        />
-      ) : (
-        <NavContent content="로그인" icon={LoginIcon} onClick={handleLoginClick} />
-      )}
+
+      <BottomWrapper>
+        {accessToken ? (
+          <>
+            <NavContent
+              onClick={() => navigate("/setting")}
+              content="설정"
+              icon={SettingIcon}
+              isNav={pathname === "/setting"}
+            />
+            <LogoutButton onClick={handleLogout}>
+              <img src={LogoutIcon} alt="로그아웃" width={24} height={24} />
+              <LogoutLabel>로그아웃</LogoutLabel>
+            </LogoutButton>
+          </>
+        ) : (
+          <NavContent content="로그인" icon={LoginIcon} onClick={handleLoginClick} />
+        )}
+      </BottomWrapper>
     </SideBarWrapper>
   );
 };
@@ -127,6 +158,13 @@ const NavWrapper = styled.div`
   width: 100%;
 `;
 
+const BottomWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+`;
+
 const NavContentWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -149,4 +187,28 @@ const NavName = styled.div<Pick<INavType, "isNav">>`
   font-size: 12px;
   font-weight: 600;
   color: ${({ isNav }) => (isNav ? "#262626" : "#ADADAD")};
+`;
+
+const LogoutButton = styled.button`
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: center;
+  cursor: pointer;
+  background: none;
+  padding: 0;
+
+  img {
+    opacity: 0.5;
+  }
+
+  &:hover img {
+    opacity: 0.8;
+  }
+`;
+
+const LogoutLabel = styled.div`
+  font-size: 12px;
+  font-weight: 600;
+  color: #ADADAD;
 `;

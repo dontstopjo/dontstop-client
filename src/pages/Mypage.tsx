@@ -44,15 +44,9 @@ export const Mypage = () => {
     <Flex width="100%" isColumn={true} paddingTop="62px" gap={72}>
       <Flex gap={40} alignItems="center">
         <Profile>
-          <img
+          <ProfileImg
             src={user?.profileImageURL || profileIcon}
             alt="프로필"
-            style={{
-              width: "80px",
-              height: "80px",
-              borderRadius: "50%",
-              objectFit: "cover",
-            }}
           />
           <UpdateButton onClick={() => navigate("/update-my")}>
             <img src={updateIcon} alt="프로필 수정" />
@@ -115,12 +109,17 @@ export const Mypage = () => {
 const Profile = styled.div`
   width: 110px;
   height: 110px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: ${colors.gray[100]};
   border-radius: 100%;
   position: relative;
+  flex-shrink: 0;
+`;
+
+const ProfileImg = styled.img`
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  object-fit: cover;
+  background-color: ${colors.gray[100]};
 `;
 const UpdateButton = styled.button`
   width: 27px;
