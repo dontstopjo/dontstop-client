@@ -19,14 +19,22 @@ instance.interceptors.request.use(
   (error) => Promise.reject(error),
 );
 
-const toHttps = (obj: unknown): unknown => {
+const BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/+$/, '');
+
+// 상대 경로(posts/, profiles/ 등)를 절대 URL로 변환하고
+// http:// 는 https:// 로 업그레이드
+const toAbsoluteUrl = (obj: unknown): unknown => {
   if (typeof obj === 'string') {
-    return obj.startsWith('http://') ? obj.replace('http://', 'https://') : obj;
+    if (obj.startsWith('http://')) return obj.replace('http://', 'https://');
+    if (obj.startsWith('https://') || obj.startsWith('data:')) return obj;
+    // 상대 경로: posts/xxx.jpg, profiles/xxx.jpg 등
+    if (/^(posts|profiles)\//.test(obj)) return `${BASE_URL}/${obj}`;
+    return obj;
   }
-  if (Array.isArray(obj)) return obj.map(toHttps);
+  if (Array.isArray(obj)) return obj.map(toAbsoluteUrl);
   if (obj && typeof obj === 'object') {
     return Object.fromEntries(
-      Object.entries(obj).map(([k, v]) => [k, toHttps(v)])
+      Object.entries(obj).map(([k, v]) => [k, toAbsoluteUrl(v)])
     );
   }
   return obj;
@@ -37,7 +45,7 @@ let isHandlingUnauth = false;
 
 instance.interceptors.response.use(
   (response) => {
-    response.data = toHttps(response.data);
+    response.data = toAbsoluteUrl(response.data);
     return response;
   },
   (error) => {

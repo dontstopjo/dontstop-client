@@ -37,7 +37,6 @@ export const Settings = () => {
       isColumn={true}
       paddingLeft="20px"
       paddingTop="60px"
-      paddingBottom="400px"
       gap={120}
     >
       <Flex isColumn={true} gap={20}>

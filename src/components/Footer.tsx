@@ -29,7 +29,7 @@ const FooterWrapper = styled.footer`
   justify-content: space-between;
   gap: 48px;
   padding: 24px 28px;
-  width: calc(100% - 80px);
+  width: 100%;
   background-color: #f8f8f8;
 `;
 

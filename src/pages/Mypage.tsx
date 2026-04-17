@@ -43,13 +43,10 @@ export const Mypage = () => {
   }
 
   return (
-    <Flex width="100%" isColumn={true} paddingTop="62px" gap={72}>
+    <Flex width="100%" height="80vh" isColumn={true} paddingTop="62px" gap={72}>
       <Flex gap={40} alignItems="center">
         <Profile>
-          <ProfileImg
-            src={user?.profileImageURL || profileIcon}
-            alt="프로필"
-          />
+          <ProfileImg src={user?.profileImageURL || profileIcon} alt="프로필" />
           <UpdateButton onClick={() => navigate("/update-my")}>
             <img src={updateIcon} alt="프로필 수정" />
           </UpdateButton>
