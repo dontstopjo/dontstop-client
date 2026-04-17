@@ -117,18 +117,16 @@ export const MypageUpdate = () => {
 const Profile = styled.div`
   width: 172px;
   height: 172px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: ${colors.gray[100]};
   border-radius: 100%;
   position: relative;
+  flex-shrink: 0;
 `;
 const ProfileIcon = styled.img`
-  width: 150px;
-  height: 150px;
+  width: 172px;
+  height: 172px;
   border-radius: 50%;
   object-fit: cover;
+  background-color: ${colors.gray[100]};
 `;
 const UpdateButton = styled.button`
   width: 42px;
