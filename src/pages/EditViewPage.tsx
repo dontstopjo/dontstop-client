@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { useState, useEffect } from 'react';
+import { useRequireAuth } from '../hooks/useRequireAuth';
 import {
   DropDown,
   ImgSelector,
@@ -20,6 +21,7 @@ import { getPostDetail, updatePost } from '../apis/posts';
 const IMG_COUNT = 4;
 
 export const EditViewPage = () => {
+  useRequireAuth();
   const { id } = useParams<{ id: string }>();
   const postId = Number(id);
   const navigate = useNavigate();

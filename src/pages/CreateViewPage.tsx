@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { useState } from 'react';
+import { useRequireAuth } from '../hooks/useRequireAuth';
 import {
   DropDown,
   ImgSelector,
@@ -20,6 +21,7 @@ import { createPost } from '../apis/posts';
 const IMG_COUNT = 4;
 
 export const CreateViewPage = () => {
+  useRequireAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 

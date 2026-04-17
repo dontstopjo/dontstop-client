@@ -1,9 +1,8 @@
+import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { colors, Flex, Text } from "../styles/theme";
-import styled from "@emotion/styled";
 import { Post } from "../components";
-import { FullLogo, ChatIcon } from "../assets";
 import { getPosts } from "../apis/posts";
 import { apiToSubStyle } from "../types/styleType";
 
@@ -16,10 +15,12 @@ export const OverviewPage = () => {
     queryFn: getPosts,
   });
 
-  const handleLoginClick = () => {
-    const baseUrl = (import.meta.env.VITE_API_BASE_URL ?? "").replace(/\/+$/, "");
-    window.location.href = `${baseUrl}/oauth2/authorization/kakao`;
-  };
+  // 비로그인 상태면 전역 로그인 모달 트리거
+  useEffect(() => {
+    if (!isLogged) {
+      window.dispatchEvent(new CustomEvent("auth:unauthorized"));
+    }
+  }, [isLogged]);
 
   if (isLoading) {
     return (
@@ -30,82 +31,23 @@ export const OverviewPage = () => {
       </Flex>
     );
   }
+
   return (
-    <>
-      <Flex alignItems="center" width="100%">
-        <Flex width="fit-content" flexWrap="wrap" gap={24} height="fit-content">
-          {posts.map((post) => (
-            <Post
-              key={post.postId}
-              title={post.title}
-              authorName={post.username}
-              keyword={post.subStyles.map((s) => apiToSubStyle[s] ?? s)}
-              views={post.views}
-              likes={post.likes}
-              imgURL={post.imageURL}
-              onClick={() => navigate(`/detail/${post.postId}`)}
-            />
-          ))}
-        </Flex>
+    <Flex alignItems="center" width="100%">
+      <Flex width="fit-content" flexWrap="wrap" gap={24} height="fit-content">
+        {posts.map((post) => (
+          <Post
+            key={post.postId}
+            title={post.title}
+            authorName={post.username}
+            keyword={post.subStyles.map((s) => apiToSubStyle[s] ?? s)}
+            views={post.views}
+            likes={post.likes}
+            imgURL={post.imageURL}
+            onClick={() => navigate(`/detail/${post.postId}`)}
+          />
+        ))}
       </Flex>
-
-      {!isLogged && (
-        <Overlay>
-          <Modal>
-            <Flex isColumn={true} width="100%" gap={20} alignItems="center">
-              <img src={FullLogo} alt="OOTDrop" height={36} />
-              <Text
-                fontSize={20}
-                fontWeight={400}
-                color={`${colors.gray[500]}`}
-              >
-                로그인 후 더 많은 룩북을 확인해보세요
-              </Text>
-            </Flex>
-
-            <KakaoButton onClick={handleLoginClick}>
-              <img src={ChatIcon} />
-              카카오 로그인
-            </KakaoButton>
-          </Modal>
-        </Overlay>
-      )}
-    </>
+    </Flex>
   );
 };
-
-const Overlay = styled.div`
-  position: fixed;
-  inset: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 100;
-`;
-
-const Modal = styled.div`
-  width: 450px;
-  background-color: #ffffff;
-  border-radius: 20px;
-  padding: 40px 40px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 60px;
-`;
-
-const KakaoButton = styled.button`
-  width: 100%;
-  padding: 14px;
-  background-color: #fee500;
-  border: none;
-  border-radius: 12px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-`;

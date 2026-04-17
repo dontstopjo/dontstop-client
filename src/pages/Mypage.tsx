@@ -5,6 +5,7 @@ import { profileIcon, updateIcon } from "../assets";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { getMe } from "../apis/me";
+import { useRequireAuth } from "../hooks/useRequireAuth";
 
 type LookbookTab = "saved" | "public" | "private";
 
@@ -15,6 +16,7 @@ const tabs: { key: LookbookTab; label: string }[] = [
 ];
 
 export const Mypage = () => {
+  useRequireAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<LookbookTab>("saved");
 
