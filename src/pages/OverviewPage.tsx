@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { colors, Flex, Text } from "../styles/theme";
@@ -8,19 +7,10 @@ import { apiToSubStyle } from "../types/styleType";
 
 export const OverviewPage = () => {
   const navigate = useNavigate();
-  const isLogged = !!localStorage.getItem("accessToken");
-
   const { data: posts = [], isLoading } = useQuery({
     queryKey: ["posts"],
     queryFn: getPosts,
   });
-
-  // 비로그인 상태면 전역 로그인 모달 트리거
-  useEffect(() => {
-    if (!isLogged) {
-      window.dispatchEvent(new CustomEvent("auth:unauthorized"));
-    }
-  }, [isLogged]);
 
   if (isLoading) {
     return (
