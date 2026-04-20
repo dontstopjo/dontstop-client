@@ -7,3 +7,4 @@ export * from "./OAuthCallbackPage";
 export * from './CreateViewPage';
 export * from './EditViewPage';
 export * from "./OAuthFailurePage";
+export * from "./SearchPage";

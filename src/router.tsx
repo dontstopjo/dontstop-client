@@ -7,9 +7,10 @@ import {
   MypageUpdate,
   Settings,
   OAuthCallbackPage,
-   CreateViewPage,
+  CreateViewPage,
   EditViewPage,
   OAuthFailurePage,
+  SearchPage,
 } from "./pages";
 
 export const router = createBrowserRouter([
@@ -44,6 +45,10 @@ export const router = createBrowserRouter([
       {
         path: "/setting",
         element: <Settings />,
+      },
+      {
+        path: "/search",
+        element: <SearchPage />,
       },
     ],
   },

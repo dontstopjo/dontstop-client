@@ -47,7 +47,7 @@ export const CreateViewPage = () => {
   const createMutation = useMutation({
     mutationFn: () => {
       const validFiles = files.filter((f): f is File => f !== null);
-      // 빈 항목 제거: title과 link가 모두 채워진 것만 전송
+
       const links = (datas.link ?? [])
         .filter((item) => item.title.trim() !== "" && item.link.trim() !== "")
         .map((item) => ({
@@ -55,6 +55,9 @@ export const CreateViewPage = () => {
           description: item.title.trim(),
           link: item.link.trim(),
         }));
+
+      console.log(links);
+
       return createPost({
         title: datas.title,
         content: datas.description,
@@ -70,6 +73,8 @@ export const CreateViewPage = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["posts"] });
       navigate("/");
+
+      console.log(createPost);
     },
   });
 
