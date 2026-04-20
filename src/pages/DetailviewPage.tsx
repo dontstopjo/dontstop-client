@@ -10,7 +10,7 @@ import {
   Input,
   Post,
 } from "../components";
-import { link, SendIcon } from "../assets";
+import { link, SendIcon, ArrowLeft, ArrowRight, GrayDot, WhiteDot } from "../assets";
 import {
   getPostDetail,
   getPosts,
@@ -38,6 +38,7 @@ export const DetailviewPage = () => {
   const queryClient = useQueryClient();
 
   const [commentValue, setCommentValue] = useState<string>("");
+  const [currentImgIndex, setCurrentImgIndex] = useState(0);
   const [isLiked, setIsLiked] = useState<boolean>(false);
   const [isSaved, setIsSaved] = useState<boolean>(false);
   const [likeCount, setLikeCount] = useState<number>(0);
@@ -167,14 +168,38 @@ export const DetailviewPage = () => {
     );
   }
 
-  const mainImageUrl = toFullImageUrl(post.imageURLs[0]);
-
-  console.log(link);
+  const imageUrls = post.imageURLs.map(toFullImageUrl);
+  const totalImages = imageUrls.length;
 
   return (
     <Flex gap={70}>
       <ContentWrapper>
-        <ImgWrapper src={mainImageUrl} />
+        <CarouselWrapper>
+          {currentImgIndex > 0 && (
+            <ArrowButton side="left" onClick={() => setCurrentImgIndex((i) => i - 1)}>
+              <img src={ArrowLeft} alt="prev" />
+            </ArrowButton>
+          )}
+          <ImgWrapper src={imageUrls[currentImgIndex]} />
+          {currentImgIndex < totalImages - 1 && (
+            <ArrowButton side="right" onClick={() => setCurrentImgIndex((i) => i + 1)}>
+              <img src={ArrowRight} alt="next" />
+            </ArrowButton>
+          )}
+          {totalImages > 1 && (
+            <DotRow>
+              {imageUrls.map((_, i) => (
+                <img
+                  key={i}
+                  src={i === currentImgIndex ? WhiteDot : GrayDot}
+                  alt={`page ${i + 1}`}
+                  onClick={() => setCurrentImgIndex(i)}
+                  style={{ cursor: "pointer" }}
+                />
+              ))}
+            </DotRow>
+          )}
+        </CarouselWrapper>
         <Flex isColumn gap={24}>
           <Flex isColumn gap={12} width="100%">
             <Flex justifyContent="space-between" width="100%">
@@ -346,12 +371,56 @@ const ProfileContent = styled.img`
   background-color: ${colors.gray[400]};
 `;
 
+const CarouselWrapper = styled.div`
+  position: relative;
+  width: 461px;
+  height: 615px;
+  border-radius: 20px;
+  overflow: hidden;
+  flex-shrink: 0;
+
+  &:hover > button {
+    opacity: 1;
+  }
+`;
+
 const ImgWrapper = styled.img`
   width: 461px;
   height: 615px;
   border-radius: 20px;
   background-color: ${colors.gray[100]};
   object-fit: cover;
+  display: block;
+`;
+
+const ArrowButton = styled.button<{ side: "left" | "right" }>`
+  position: absolute;
+  top: 50%;
+  ${({ side }) => side}: 16px;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 100%;
+  background-color: white;
+  border: 1.5px solid ${colors.gray[200]};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s;
+  z-index: 10;
+`;
+
+const DotRow = styled.div`
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  z-index: 10;
 `;
 
 const MenuWrapper = styled.div`

@@ -22,4 +22,8 @@ export { default as SignoutIcon } from "./signout_icon.svg";
 export { default as updateIcon } from "./update_icon.svg";
 export { default as viewIcon } from "./view_icon.svg";
 export { default as Plus } from './Plus.svg';
+export { default as ArrowLeft } from './thin-arrow-left.svg';
+export { default as ArrowRight } from './thin-arrow-right.svg';
+export { default as GrayDot } from './gray-dot.svg';
+export { default as WhiteDot } from './white-dot.svg';
 
