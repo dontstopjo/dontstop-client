@@ -32,7 +32,7 @@ export const App = () => {
       <RouterProvider router={router} />
       <GlobalStyle />
       {showLoginModal && (
-        <LoginModal onClose={() => setShowLoginModal(false)} />
+        <LoginModal />
       )}
     </QueryClientProvider>
   );

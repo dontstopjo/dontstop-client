@@ -1,11 +1,7 @@
 import styled from '@emotion/styled';
 import { FullLogo, ChatIcon } from '../assets';
 
-interface LoginModalProps {
-  onClose?: () => void;
-}
-
-export const LoginModal = ({ onClose }: LoginModalProps) => {
+export const LoginModal = () => {
   const handleLogin = () => {
     const baseUrl = (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/+$/, '');
     window.location.href = `${baseUrl}/oauth2/authorization/kakao`;
