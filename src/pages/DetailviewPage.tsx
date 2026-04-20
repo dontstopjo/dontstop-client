@@ -23,6 +23,7 @@ import {
 } from "../apis/posts";
 import { getMe } from "../apis/me";
 import { apiToSubStyle } from "../types/styleType";
+import type { PostDetailType } from "../types";
 
 const toFullImageUrl = (url: string) => {
   if (!url) return "";
@@ -72,7 +73,6 @@ export const DetailviewPage = () => {
     staleTime: 0,
   });
 
-  // 서버 데이터 로드되면 로컬 state 초기화 (postId가 바뀌면 initialized가 false로 리셋되므로 재초기화)
   if (post && !initialized) {
     setIsLiked(post.liked);
     setIsSaved(post.saved);
@@ -92,14 +92,24 @@ export const DetailviewPage = () => {
     mutationFn: (currentlyLiked: boolean) =>
       currentlyLiked ? unlikePost(postId) : likePost(postId),
     onMutate: (currentlyLiked) => {
-      // 낙관적 업데이트 - API 응답 전에 UI 먼저 변경
-      setIsLiked(!currentlyLiked);
-      setLikeCount((prev) => (currentlyLiked ? prev - 1 : prev + 1));
+      const newLiked = !currentlyLiked;
+      const newCount = currentlyLiked ? likeCount - 1 : likeCount + 1;
+      setIsLiked(newLiked);
+      setLikeCount(newCount);
+      queryClient.setQueryData(
+        ["posts", postId],
+        (old: PostDetailType | undefined) =>
+          old ? { ...old, liked: newLiked, likes: newCount } : old,
+      );
     },
     onError: (_, currentlyLiked) => {
-      // 실패 시 롤백
       setIsLiked(currentlyLiked);
       setLikeCount((prev) => (currentlyLiked ? prev + 1 : prev - 1));
+      queryClient.setQueryData(
+        ["posts", postId],
+        (old: PostDetailType | undefined) =>
+          old ? { ...old, liked: currentlyLiked } : old,
+      );
     },
   });
 
@@ -107,16 +117,27 @@ export const DetailviewPage = () => {
     mutationFn: (currentlySaved: boolean) =>
       currentlySaved ? unsavePost(postId) : savePost(postId),
     onMutate: (currentlySaved) => {
-      setIsSaved(!currentlySaved);
-      setSaveCount((prev) => (currentlySaved ? prev - 1 : prev + 1));
+      const newSaved = !currentlySaved;
+      const newCount = currentlySaved ? saveCount - 1 : saveCount + 1;
+      setIsSaved(newSaved);
+      setSaveCount(newCount);
+      queryClient.setQueryData(
+        ["posts", postId],
+        (old: PostDetailType | undefined) =>
+          old ? { ...old, saved: newSaved, saves: newCount } : old,
+      );
     },
     onError: (_, currentlySaved) => {
       setIsSaved(currentlySaved);
       setSaveCount((prev) => (currentlySaved ? prev + 1 : prev - 1));
+      queryClient.setQueryData(
+        ["posts", postId],
+        (old: PostDetailType | undefined) =>
+          old ? { ...old, saved: currentlySaved } : old,
+      );
     },
   });
 
-  // 메뉴 외부 클릭 시 닫기
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
@@ -187,13 +208,19 @@ export const DetailviewPage = () => {
       <ContentWrapper>
         <CarouselWrapper>
           {currentImgIndex > 0 && (
-            <ArrowButton side="left" onClick={() => setCurrentImgIndex((i) => i - 1)}>
+            <ArrowButton
+              side="left"
+              onClick={() => setCurrentImgIndex((i) => i - 1)}
+            >
               <img src={ArrowLeft} alt="prev" />
             </ArrowButton>
           )}
           <ImgWrapper src={imageUrls[currentImgIndex]} />
           {currentImgIndex < totalImages - 1 && (
-            <ArrowButton side="right" onClick={() => setCurrentImgIndex((i) => i + 1)}>
+            <ArrowButton
+              side="right"
+              onClick={() => setCurrentImgIndex((i) => i + 1)}
+            >
               <img src={ArrowRight} alt="next" />
             </ArrowButton>
           )}
