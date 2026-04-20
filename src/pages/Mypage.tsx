@@ -14,7 +14,7 @@ type LookbookTab = "saved" | "public" | "private";
 
 const tabs: { key: LookbookTab; label: string }[] = [
   { key: "saved", label: "저장한 룩북" },
-  { key: "public", label: "MY 공개 룩북" },
+  { key: "public", label: "나의 공개 룩북" },
   { key: "private", label: "나의 비공개 룩북" },
 ];
 
@@ -33,6 +33,8 @@ export const Mypage = () => {
     queryFn: () => getMypage(user!.userId),
     enabled: !!user?.userId,
   });
+
+  console.log(user);
 
   const tabPosts: PostSummaryType[] =
     activeTab === "saved"
@@ -60,10 +62,7 @@ export const Mypage = () => {
     <Flex width="100%" isColumn={true} paddingTop="62px" gap={72}>
       <Flex gap={40} alignItems="center">
         <Profile>
-          <ProfileImg
-            src={user?.profileImageURL || profileIcon}
-            alt="프로필"
-          />
+          <ProfileImg src={user?.profileImageURL || profileIcon} alt="프로필" />
           <UpdateButton onClick={() => navigate("/update-my")}>
             <img src={updateIcon} alt="프로필 수정" />
           </UpdateButton>
