@@ -12,8 +12,8 @@ export const LoginModal = ({ onClose }: LoginModalProps) => {
   };
 
   return (
-    <Overlay onClick={onClose}>
-      <Modal onClick={(e) => e.stopPropagation()}>
+    <Overlay>
+      <Modal>
         <Flex>
           <img src={FullLogo} alt="OOTDrop" height={36} />
           <SubText>로그인 후 더 많은 룩북을 확인해보세요</SubText>
