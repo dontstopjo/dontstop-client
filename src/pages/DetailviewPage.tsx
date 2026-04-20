@@ -10,7 +10,7 @@ import {
   Input,
   Post,
 } from "../components";
-import { link, SendIcon, ArrowLeft, ArrowRight, GrayDot, WhiteDot } from "../assets";
+import { SendIcon, ArrowLeft, ArrowRight, GrayDot, WhiteDot } from "../assets";
 import {
   getPostDetail,
   getPosts,
