@@ -273,16 +273,21 @@ export const DetailviewPage = () => {
           </Flex>
         </CommentWrapper>
         {post.links.length > 0 && (
-          <Flex gapX={44} gapY={28} width="100%" flexWrap="wrap">
-            {post.links.map((link, i) => (
-              <InformationContent
-                key={i}
-                description={link.description}
-                link={link.link}
-                category={link.category}
-                imageURL={link.imageURL}
-              />
-            ))}
+          <Flex isColumn gap={20} width="100%">
+            <Text fontSize={20} fontWeight={600} color={colors.gray[900]}>
+              착용 정보
+            </Text>
+            <Flex gapX={44} gapY={28} width="100%" flexWrap="wrap">
+              {post.links.map((link, i) => (
+                <InformationContent
+                  key={i}
+                  description={link.description}
+                  link={link.link}
+                  category={link.category}
+                  imageURL={link.imageURL}
+                />
+              ))}
+            </Flex>
           </Flex>
         )}
       </ContentWrapper>

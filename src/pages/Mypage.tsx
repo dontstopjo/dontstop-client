@@ -4,8 +4,11 @@ import { colors, Flex, Text } from "../styles/theme";
 import { profileIcon, updateIcon } from "../assets";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import { getMe } from "../apis/me";
+import { getMe, getMypage } from "../apis/me";
 import { useRequireAuth } from "../hooks/useRequireAuth";
+import { Post } from "../components";
+import { apiToSubStyle } from "../types/styleType";
+import type { PostSummaryType } from "../types";
 
 type LookbookTab = "saved" | "public" | "private";
 
@@ -25,7 +28,18 @@ export const Mypage = () => {
     queryFn: getMe,
   });
 
-  const isMine = true;
+  const { data: mypage } = useQuery({
+    queryKey: ["mypage", user?.userId],
+    queryFn: () => getMypage(user!.userId),
+    enabled: !!user?.userId,
+  });
+
+  const tabPosts: PostSummaryType[] =
+    activeTab === "saved"
+      ? (mypage?.savedPosts ?? [])
+      : activeTab === "public"
+        ? (mypage?.publicPosts ?? [])
+        : (mypage?.privatePosts ?? []);
 
   if (isLoading) {
     return (
@@ -43,10 +57,13 @@ export const Mypage = () => {
   }
 
   return (
-    <Flex width="100%" height="80vh" isColumn={true} paddingTop="62px" gap={72}>
+    <Flex width="100%" isColumn={true} paddingTop="62px" gap={72}>
       <Flex gap={40} alignItems="center">
         <Profile>
-          <ProfileImg src={user?.profileImageURL || profileIcon} alt="프로필" />
+          <ProfileImg
+            src={user?.profileImageURL || profileIcon}
+            alt="프로필"
+          />
           <UpdateButton onClick={() => navigate("/update-my")}>
             <img src={updateIcon} alt="프로필 수정" />
           </UpdateButton>
@@ -67,39 +84,54 @@ export const Mypage = () => {
           룩북 컬렉션
         </Text>
 
-        {isMine && (
-          <Flex gap={20} alignItems="center">
-            {tabs.map((tab) => {
-              const isActive = activeTab === tab.key;
-              return (
-                <Flex
-                  key={tab.key}
-                  onClick={() => setActiveTab(tab.key)}
-                  paddingTop="8px"
-                  paddingBottom="8px"
-                  paddingLeft="18px"
-                  paddingRight="18px"
-                  borderRadius="12px"
-                  backgroundColor={isActive ? colors.gray[100] : "transparent"}
-                  style={{
-                    cursor: "pointer",
-                    transition: "background-color 0.2s ease",
-                  }}
-                >
-                  <Text fontSize={20} fontWeight={500} color={colors.gray[900]}>
-                    {tab.label}
-                  </Text>
-                </Flex>
-              );
-            })}
+        <Flex gap={20} alignItems="center">
+          {tabs.map((tab) => {
+            const isActive = activeTab === tab.key;
+            return (
+              <Flex
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key)}
+                paddingTop="8px"
+                paddingBottom="8px"
+                paddingLeft="18px"
+                paddingRight="18px"
+                borderRadius="12px"
+                backgroundColor={isActive ? colors.gray[100] : "transparent"}
+                style={{
+                  cursor: "pointer",
+                  transition: "background-color 0.2s ease",
+                }}
+              >
+                <Text fontSize={20} fontWeight={500} color={colors.gray[900]}>
+                  {tab.label}
+                </Text>
+              </Flex>
+            );
+          })}
+        </Flex>
+
+        {tabPosts.length > 0 ? (
+          <Flex width="fit-content" flexWrap="wrap" gap={24}>
+            {tabPosts.map((post) => (
+              <Post
+                key={post.postId}
+                title={post.title}
+                authorName={post.username}
+                keyword={post.subStyles.map((s) => apiToSubStyle[s] ?? s)}
+                views={post.views}
+                likes={post.likes}
+                imgURL={post.imageURL}
+                onClick={() => navigate(`/detail/${post.postId}`)}
+              />
+            ))}
+          </Flex>
+        ) : (
+          <Flex alignItems="center" width="100%">
+            <Text fontSize={16} fontWeight={400} color={colors.gray[400]}>
+              {mypage ? "게시글이 없습니다." : "불러오는 중..."}
+            </Text>
           </Flex>
         )}
-
-        <Flex alignItems="center" width="100%">
-          <Text fontSize={16} fontWeight={400} color={colors.gray[400]}>
-            해당 탭의 룩북 조회 기능은 준비 중입니다.
-          </Text>
-        </Flex>
       </Flex>
     </Flex>
   );
@@ -120,6 +152,7 @@ const ProfileImg = styled.img`
   object-fit: cover;
   background-color: ${colors.gray[100]};
 `;
+
 const UpdateButton = styled.button`
   width: 27px;
   height: 27px;

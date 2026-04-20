@@ -1,8 +1,13 @@
 import instance from './instance';
-import type { UserInfoType } from '../types';
+import type { UserInfoType, MypageType } from '../types';
 
 export const getMe = async (): Promise<UserInfoType> => {
   const { data } = await instance.get('/me');
+  return data;
+};
+
+export const getMypage = async (userId: number): Promise<MypageType> => {
+  const { data } = await instance.get(`/mypage/${userId}`);
   return data;
 };
 
