@@ -32,6 +32,7 @@ export const Mypage = () => {
     queryKey: ["mypage", user?.userId],
     queryFn: () => getMypage(user!.userId),
     enabled: !!user?.userId,
+    staleTime: 0,
   });
 
   const tabPosts: PostSummaryType[] =
