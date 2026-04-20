@@ -62,7 +62,11 @@ export const Mypage = () => {
     <Flex width="100%" isColumn={true} paddingTop="62px" gap={72}>
       <Flex gap={40} alignItems="center">
         <Profile>
-          <ProfileImg src={user?.profileImageURL || profileIcon} alt="프로필" />
+          <ProfileImg
+          src={user?.profileImageURL || profileIcon}
+          alt="프로필"
+          onError={(e) => { (e.target as HTMLImageElement).src = profileIcon; }}
+        />
           <UpdateButton onClick={() => navigate("/update-my")}>
             <img src={updateIcon} alt="프로필 수정" />
           </UpdateButton>
