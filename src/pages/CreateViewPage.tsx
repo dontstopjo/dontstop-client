@@ -43,11 +43,14 @@ export const CreateViewPage = () => {
   const createMutation = useMutation({
     mutationFn: () => {
       const validFiles = files.filter((f): f is File => f !== null);
-      const links = (datas.link ?? []).map((item) => ({
-        category: item.keyword || 'TOP',
-        description: item.title,
-        link: item.link,
-      }));
+      // 빈 항목 제거: title과 link가 모두 채워진 것만 전송
+      const links = (datas.link ?? [])
+        .filter((item) => item.title.trim() !== '' && item.link.trim() !== '')
+        .map((item) => ({
+          category: item.keyword || 'TOP',
+          description: item.title.trim(),
+          link: item.link.trim(),
+        }));
       return createPost({
         title: datas.title,
         content: datas.description,
@@ -108,6 +111,15 @@ export const CreateViewPage = () => {
 
   const handleTextAreaChange = (name: string, e: string) => {
     setDatas((prev) => ({ ...prev, [name]: e }));
+  };
+
+  const handleLinkKeywordChange = (id: string, value: string) => {
+    setDatas((prev) => ({
+      ...prev,
+      link: (prev.link ?? []).map((item) =>
+        item.id === id ? { ...item, keyword: value } : item,
+      ),
+    }));
   };
 
   const handleLinkChange = (id: string, field: 'title' | 'link', value: string) => {
@@ -192,8 +204,22 @@ export const CreateViewPage = () => {
             <Flex isColumn gap={10} width="100%">
               {(datas.link ?? []).map((item) => (
                 <Flex key={item.id} gap={10} width="100%" alignItems="center">
+                  <CategorySelect
+                    value={item.keyword || 'TOP'}
+                    onChange={(e) => handleLinkKeywordChange(item.id, e.target.value)}
+                  >
+                    <option value="TOP">상의</option>
+                    <option value="BOTTOM">하의</option>
+                    <option value="OUTERWEAR">아우터</option>
+                    <option value="LAYERING">레이어링</option>
+                    <option value="HAT">모자</option>
+                    <option value="SHOES">신발</option>
+                    <option value="BAG">가방</option>
+                    <option value="ACCESSORY">악세서리</option>
+                    <option value="MAKEUP">메이크업</option>
+                  </CategorySelect>
                   <Input
-                    width="327px"
+                    width="280px"
                     placeholder="룩정보명을 입력하세요"
                     value={item.title}
                     onChange={(e) => handleLinkChange(item.id, 'title', e.target.value)}
@@ -218,6 +244,24 @@ export const CreateViewPage = () => {
     </Flex>
   );
 };
+
+const CategorySelect = styled.select`
+  flex-shrink: 0;
+  height: 47px;
+  padding: 0 10px;
+  border-radius: 12px;
+  border: 1px solid ${colors.gray[100]};
+  background-color: ${colors.gray[50]};
+  color: ${colors.gray[800]};
+  font-size: 14px;
+  cursor: pointer;
+  appearance: none;
+  outline: none;
+
+  &:focus {
+    border-color: ${colors.gray[300]};
+  }
+`;
 
 const DeleteButton = styled.button`
   flex-shrink: 0;

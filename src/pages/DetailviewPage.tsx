@@ -10,7 +10,7 @@ import {
   Input,
   Post,
 } from "../components";
-import { SendIcon } from "../assets";
+import { link, SendIcon } from "../assets";
 import {
   getPostDetail,
   getPosts,
@@ -169,6 +169,8 @@ export const DetailviewPage = () => {
 
   const mainImageUrl = toFullImageUrl(post.imageURLs[0]);
 
+  console.log(link);
+
   return (
     <Flex gap={70}>
       <ContentWrapper>
@@ -220,7 +222,12 @@ export const DetailviewPage = () => {
                   </EllipsisButton>
                   {menuOpen && (
                     <DropdownMenu>
-                      <DropdownItem onClick={() => { navigate(`/edit/${postId}`); setMenuOpen(false); }}>
+                      <DropdownItem
+                        onClick={() => {
+                          navigate(`/edit/${postId}`);
+                          setMenuOpen(false);
+                        }}
+                      >
                         수정하기
                       </DropdownItem>
                       <DropdownItem danger onClick={handleDelete}>
