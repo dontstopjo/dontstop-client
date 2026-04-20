@@ -39,6 +39,7 @@ export const DetailviewPage = () => {
 
   const [commentValue, setCommentValue] = useState<string>("");
   const [currentImgIndex, setCurrentImgIndex] = useState(0);
+  useEffect(() => { setCurrentImgIndex(0); }, [postId]);
   const [isLiked, setIsLiked] = useState<boolean>(false);
   const [isSaved, setIsSaved] = useState<boolean>(false);
   const [likeCount, setLikeCount] = useState<number>(0);
