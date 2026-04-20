@@ -34,8 +34,6 @@ export const Mypage = () => {
     enabled: !!user?.userId,
   });
 
-  console.log(user);
-
   const tabPosts: PostSummaryType[] =
     activeTab === "saved"
       ? (mypage?.savedPosts ?? [])
@@ -63,10 +61,12 @@ export const Mypage = () => {
       <Flex gap={40} alignItems="center">
         <Profile>
           <ProfileImg
-          src={user?.profileImageURL || profileIcon}
-          alt="프로필"
-          onError={(e) => { (e.target as HTMLImageElement).src = profileIcon; }}
-        />
+            src={user?.profileImageURL || profileIcon}
+            alt="프로필"
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = profileIcon;
+            }}
+          />
           <UpdateButton onClick={() => navigate("/update-my")}>
             <img src={updateIcon} alt="프로필 수정" />
           </UpdateButton>

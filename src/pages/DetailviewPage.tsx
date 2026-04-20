@@ -39,13 +39,23 @@ export const DetailviewPage = () => {
 
   const [commentValue, setCommentValue] = useState<string>("");
   const [currentImgIndex, setCurrentImgIndex] = useState(0);
-  useEffect(() => { setCurrentImgIndex(0); }, [postId]);
   const [isLiked, setIsLiked] = useState<boolean>(false);
   const [isSaved, setIsSaved] = useState<boolean>(false);
   const [likeCount, setLikeCount] = useState<number>(0);
   const [saveCount, setSaveCount] = useState<number>(0);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [initialized, setInitialized] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  // postId가 바뀌면 모든 상태 즉시 리셋
+  useEffect(() => {
+    setCurrentImgIndex(0);
+    setIsLiked(false);
+    setIsSaved(false);
+    setLikeCount(0);
+    setSaveCount(0);
+    setInitialized(false);
+  }, [postId]);
 
   const isLoggedIn = !!localStorage.getItem("accessToken");
 
@@ -61,8 +71,7 @@ export const DetailviewPage = () => {
     enabled: !!postId,
   });
 
-  // 서버 데이터 로드되면 로컬 state 초기화
-  const [initialized, setInitialized] = useState(false);
+  // 서버 데이터 로드되면 로컬 state 초기화 (postId가 바뀌면 initialized가 false로 리셋되므로 재초기화)
   if (post && !initialized) {
     setIsLiked(post.liked);
     setIsSaved(post.saved);
