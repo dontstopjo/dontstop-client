@@ -69,6 +69,7 @@ export const DetailviewPage = () => {
     queryKey: ["posts", postId],
     queryFn: () => getPostDetail(postId),
     enabled: !!postId,
+    staleTime: 0,
   });
 
   // 서버 데이터 로드되면 로컬 state 초기화 (postId가 바뀌면 initialized가 false로 리셋되므로 재초기화)
