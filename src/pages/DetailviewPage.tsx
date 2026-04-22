@@ -241,15 +241,24 @@ export const DetailviewPage = () => {
         <Flex isColumn gap={24}>
           <Flex isColumn gap={12} width="100%">
             <Flex justifyContent="space-between" width="100%">
-              <Flex alignItems="center" gap={12}>
+              <AuthorLink
+                onClick={() =>
+                  currentUser?.userId === post.userId
+                    ? navigate("/my")
+                    : navigate(`/user/${post.userId}`)
+                }
+              >
                 <ProfileContent
                   src={post.profileImageURL}
                   alt={post.username}
+                  onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).src = "";
+                  }}
                 />
                 <Text fontSize={16} fontWeight={600} color={colors.gray[1000]}>
                   {post.username}
                 </Text>
-              </Flex>
+              </AuthorLink>
               <Flex gap={8} alignItems="center">
                 <PostActions number={post.views} type="eye" />
                 <PostActions
@@ -400,6 +409,21 @@ const CommentWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 24px;
+`;
+
+const AuthorLink = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  border-radius: 8px;
+  padding: 4px;
+  margin: -4px;
+  transition: background-color 0.15s;
+
+  &:hover {
+    background-color: ${colors.gray[50]};
+  }
 `;
 
 const ProfileContent = styled.img`

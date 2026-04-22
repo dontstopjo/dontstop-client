@@ -11,6 +11,7 @@ import {
   EditViewPage,
   OAuthFailurePage,
   SearchPage,
+  UserPage,
 } from "./pages";
 
 export const router = createBrowserRouter([
@@ -49,6 +50,10 @@ export const router = createBrowserRouter([
       {
         path: "/search",
         element: <SearchPage />,
+      },
+      {
+        path: "/user/:userId",
+        element: <UserPage />,
       },
     ],
   },

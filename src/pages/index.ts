@@ -8,3 +8,4 @@ export * from './CreateViewPage';
 export * from './EditViewPage';
 export * from "./OAuthFailurePage";
 export * from "./SearchPage";
+export * from "./UserPage";
