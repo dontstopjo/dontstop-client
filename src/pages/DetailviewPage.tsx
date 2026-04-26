@@ -182,7 +182,7 @@ export const DetailviewPage = () => {
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") handleCommentSubmit();
+    if (e.key === "Enter" && !e.nativeEvent.isComposing) handleCommentSubmit();
   };
 
   if (isLoading || !post) {
