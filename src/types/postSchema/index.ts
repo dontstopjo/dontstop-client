@@ -21,8 +21,8 @@ export interface PostDetailType {
   likes: number;
   views: number;
   saves: number;
-  saved: boolean;
-  liked: boolean;
+  isSaved: boolean;
+  isLiked: boolean;
   mainStyle: string;
   subStyles: string[];
   links: FashionLinkType[];

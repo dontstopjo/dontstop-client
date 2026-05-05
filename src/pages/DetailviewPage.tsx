@@ -74,8 +74,8 @@ export const DetailviewPage = () => {
   });
 
   if (post && !initialized) {
-    setIsLiked(post.liked);
-    setIsSaved(post.saved);
+    setIsLiked(post.isLiked);
+    setIsSaved(post.isSaved);
     setLikeCount(post.likes);
     setSaveCount(post.saves);
     setInitialized(true);
@@ -99,7 +99,7 @@ export const DetailviewPage = () => {
       queryClient.setQueryData(
         ["posts", postId],
         (old: PostDetailType | undefined) =>
-          old ? { ...old, liked: newLiked, likes: newCount } : old,
+          old ? { ...old, isLiked: newLiked, likes: newCount } : old,
       );
     },
     onError: (_, currentlyLiked) => {
@@ -108,7 +108,7 @@ export const DetailviewPage = () => {
       queryClient.setQueryData(
         ["posts", postId],
         (old: PostDetailType | undefined) =>
-          old ? { ...old, liked: currentlyLiked } : old,
+          old ? { ...old, isLiked: currentlyLiked } : old,
       );
     },
   });
@@ -124,7 +124,7 @@ export const DetailviewPage = () => {
       queryClient.setQueryData(
         ["posts", postId],
         (old: PostDetailType | undefined) =>
-          old ? { ...old, saved: newSaved, saves: newCount } : old,
+          old ? { ...old, isSaved: newSaved, saves: newCount } : old,
       );
     },
     onError: (_, currentlySaved) => {
@@ -133,7 +133,7 @@ export const DetailviewPage = () => {
       queryClient.setQueryData(
         ["posts", postId],
         (old: PostDetailType | undefined) =>
-          old ? { ...old, saved: currentlySaved } : old,
+          old ? { ...old, isSaved: currentlySaved } : old,
       );
     },
   });
