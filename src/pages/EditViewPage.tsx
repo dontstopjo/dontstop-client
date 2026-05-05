@@ -79,12 +79,23 @@ export const EditViewPage = () => {
 
   const updateMutation = useMutation({
     mutationFn: () => {
-      const validFiles = files.filter((f): f is File => f !== null);
-      const existingImageURLs = (post?.imageURLs ?? []).map((url, i) => ({
-        url,
-        order: i,
-      }));
-      const newFileOrders = validFiles.map((_, i) => existingImageURLs.length + i);
+      // 슬롯별로 판단:
+      // files[i] !== null → 새 파일로 교체 (기존 URL 제외)
+      // files[i] === null && previews[i] !== null → 기존 URL 유지
+      // previews[i] === null → 빈 슬롯 (무시)
+      const validFiles: File[] = [];
+      const existingImageURLs: { url: string; order: number }[] = [];
+      let keptCount = 0;
+
+      for (let i = 0; i < IMG_COUNT; i++) {
+        if (files[i] !== null) {
+          validFiles.push(files[i] as File);
+        } else if (previews[i] !== null) {
+          existingImageURLs.push({ url: previews[i] as string, order: keptCount++ });
+        }
+      }
+
+      const newFileOrders = validFiles.map((_, i) => keptCount + i);
       const links = (datas.link ?? [])
         .filter((item) => item.title.trim() !== '' && item.link.trim() !== '')
         .map((item) => ({

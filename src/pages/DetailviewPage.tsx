@@ -23,7 +23,7 @@ import {
 } from "../apis/posts";
 import { getMe } from "../apis/me";
 import { apiToSubStyle } from "../types/styleType";
-import type { PostDetailType } from "../types";
+import type { PostDetailType, PostSummaryType } from "../types";
 
 const toFullImageUrl = (url: string) => {
   if (!url) return "";
@@ -96,10 +96,17 @@ export const DetailviewPage = () => {
       const newCount = currentlyLiked ? likeCount - 1 : likeCount + 1;
       setIsLiked(newLiked);
       setLikeCount(newCount);
+      // 상세 캐시 업데이트
       queryClient.setQueryData(
         ["posts", postId],
         (old: PostDetailType | undefined) =>
           old ? { ...old, isLiked: newLiked, likes: newCount } : old,
+      );
+      // 목록 캐시 업데이트 → 옆에 뜨는 게시글 카드에 즉시 반영
+      queryClient.setQueryData(
+        ["posts"],
+        (old: PostSummaryType[] | undefined) =>
+          old?.map((p) => p.postId === postId ? { ...p, likes: newCount } : p),
       );
     },
     onError: (_, currentlyLiked) => {
@@ -109,6 +116,15 @@ export const DetailviewPage = () => {
         ["posts", postId],
         (old: PostDetailType | undefined) =>
           old ? { ...old, isLiked: currentlyLiked } : old,
+      );
+      queryClient.setQueryData(
+        ["posts"],
+        (old: PostSummaryType[] | undefined) =>
+          old?.map((p) =>
+            p.postId === postId
+              ? { ...p, likes: currentlyLiked ? p.likes : p.likes - 1 }
+              : p,
+          ),
       );
     },
   });
@@ -121,10 +137,17 @@ export const DetailviewPage = () => {
       const newCount = currentlySaved ? saveCount - 1 : saveCount + 1;
       setIsSaved(newSaved);
       setSaveCount(newCount);
+      // 상세 캐시 업데이트
       queryClient.setQueryData(
         ["posts", postId],
         (old: PostDetailType | undefined) =>
           old ? { ...old, isSaved: newSaved, saves: newCount } : old,
+      );
+      // 목록 캐시 업데이트
+      queryClient.setQueryData(
+        ["posts"],
+        (old: PostSummaryType[] | undefined) =>
+          old?.map((p) => p.postId === postId ? { ...p, saves: newCount } : p),
       );
     },
     onError: (_, currentlySaved) => {
@@ -134,6 +157,15 @@ export const DetailviewPage = () => {
         ["posts", postId],
         (old: PostDetailType | undefined) =>
           old ? { ...old, isSaved: currentlySaved } : old,
+      );
+      queryClient.setQueryData(
+        ["posts"],
+        (old: PostSummaryType[] | undefined) =>
+          old?.map((p) =>
+            p.postId === postId
+              ? { ...p, saves: currentlySaved ? p.saves : p.saves - 1 }
+              : p,
+          ),
       );
     },
   });
