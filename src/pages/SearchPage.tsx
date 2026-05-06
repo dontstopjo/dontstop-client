@@ -4,7 +4,6 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { colors, Flex, Text } from "../styles/theme";
 import { Post } from "../components";
-import { Input } from "../components/Input";
 import { getPosts } from "../apis/posts";
 import { mainStyles, subStyles } from "../types/styleType";
 import { apiToSubStyle } from "../types/styleType";
@@ -14,7 +13,9 @@ export const SearchPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const [searchValue, setSearchValue] = useState(searchParams.get("q") ?? "");
+  // 검색어는 URL params에서만 읽음 (레이아웃 검색창이 URL을 바꾸면 자동 반영)
+  const searchValue = searchParams.get("q") ?? "";
+
   const [selectedMains, setSelectedMains] = useState<MainStyle[]>(
     (searchParams.getAll("main") as MainStyle[]) ?? [],
   );
@@ -23,7 +24,6 @@ export const SearchPage = () => {
   );
 
   useEffect(() => {
-    setSearchValue(searchParams.get("q") ?? "");
     setSelectedMains((searchParams.getAll("main") as MainStyle[]) ?? []);
     setSelectedSubs(searchParams.getAll("sub") ?? []);
   }, [searchParams]);
@@ -33,18 +33,12 @@ export const SearchPage = () => {
     queryFn: getPosts,
   });
 
-  const updateParams = (q: string, mains: MainStyle[], subs: string[]) => {
+  const updateParams = (mains: MainStyle[], subs: string[]) => {
     const params = new URLSearchParams();
-    if (q) params.set("q", q);
+    if (searchValue) params.set("q", searchValue);
     mains.forEach((m) => params.append("main", m));
     subs.forEach((s) => params.append("sub", s));
     setSearchParams(params, { replace: true });
-  };
-
-  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      updateParams(searchValue.trim(), selectedMains, selectedSubs);
-    }
   };
 
   const handleMainClick = (style: MainStyle) => {
@@ -52,7 +46,7 @@ export const SearchPage = () => {
       ? selectedMains.filter((m) => m !== style)
       : [...selectedMains, style];
     setSelectedMains(next);
-    updateParams(searchValue, next, selectedSubs);
+    updateParams(next, selectedSubs);
   };
 
   const handleSubClick = (sub: string) => {
@@ -60,7 +54,7 @@ export const SearchPage = () => {
       ? selectedSubs.filter((s) => s !== sub)
       : [...selectedSubs, sub];
     setSelectedSubs(next);
-    updateParams(searchValue, selectedMains, next);
+    updateParams(selectedMains, next);
   };
 
   // 선택된 메인 스타일들의 서브 스타일 합집합
@@ -70,24 +64,19 @@ export const SearchPage = () => {
 
   // 클라이언트 사이드 OR 필터링 (API 완성 후 교체)
   const filtered = allPosts.filter((post) => {
-    // 텍스트 검색 (AND)
     const qMatch =
       !searchValue ||
       post.title.toLowerCase().includes(searchValue.toLowerCase()) ||
       post.username.toLowerCase().includes(searchValue.toLowerCase());
 
-    // 스타일 필터 (OR)
     const hasStyleFilter = selectedMains.length > 0 || selectedSubs.length > 0;
     let styleMatch = true;
 
     if (hasStyleFilter) {
       const postSubsKo = (post.subStyles ?? []).map((s) => apiToSubStyle[s] ?? s);
-
       if (selectedSubs.length > 0) {
-        // 특정 서브 스타일 선택됨: 그 중 하나라도 포함하면 매칭
         styleMatch = postSubsKo.some((s) => selectedSubs.includes(s));
       } else {
-        // 메인만 선택됨: 선택된 메인들의 서브 스타일 중 하나라도 포함하면 매칭
         const wantedSubs = selectedMains.flatMap((m) => [...subStyles[m]]);
         styleMatch = postSubsKo.some((s) => wantedSubs.includes(s));
       }
@@ -98,15 +87,6 @@ export const SearchPage = () => {
 
   return (
     <Flex isColumn gap={32} width="100%">
-      {/* 검색바 */}
-      <Input
-        value={searchValue}
-        onChange={(e) => setSearchValue(e.target.value)}
-        onKeyDown={handleSearchKeyDown}
-        type="search"
-        placeholder="검색어를 입력하고 엔터를 눌러주세요"
-      />
-
       {/* 필터 영역 */}
       <Flex isColumn gap={14}>
         {/* 메인 스타일 칩 */}
@@ -122,7 +102,7 @@ export const SearchPage = () => {
           ))}
         </ChipRow>
 
-        {/* 서브 스타일 칩 — 선택된 메인들의 서브스타일 합집합 */}
+        {/* 서브 스타일 칩 */}
         {visibleSubs.length > 0 && (
           <SubChipRow>
             {visibleSubs.map((sub) => (
@@ -147,7 +127,7 @@ export const SearchPage = () => {
               onClick={() => {
                 setSelectedMains([]);
                 setSelectedSubs([]);
-                updateParams(searchValue, [], []);
+                updateParams([], []);
               }}
             >
               필터 초기화
